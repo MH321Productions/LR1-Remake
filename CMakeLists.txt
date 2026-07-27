@@ -18,5 +18,14 @@ add_executable(lr1-remake
         src/app/render.cpp
         src/app/event.cpp
         src/util/log.cpp
+        src/renderer/vulkan.cpp
 )
 target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan)
+target_compile_definitions(lr1-remake PUBLIC
+        GLM_FORCE_RADIANS
+        GLM_FORCE_DEPTH_ZERO_TO_ONE
+)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    message(STATUS "Debug Build")
+    target_compile_definitions(lr1-remake PUBLIC LR1_DEBUG)
+endif ()

@@ -61,6 +61,7 @@ namespace LR1_Remake {
     }
 
     void Main::onCleanup() {
+        vulkan.cleanup();
         if (mixer) MIX_DestroyMixer(mixer);
         if (window) SDL_DestroyWindow(window);
     }

@@ -1,8 +1,10 @@
 #include <iostream>
 
+#include <LR1-remake/app.hpp>
 
 int main() {
     std::cout << "Hello world" << std::endl;
 
-    return 0;
+    LR1_Remake::Main main;
+    return main.onExecute();
 }

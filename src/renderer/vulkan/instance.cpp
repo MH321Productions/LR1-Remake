@@ -5,59 +5,36 @@
 #include <LR1-remake/app.hpp>
 #include <LR1-remake/renderer/vulkan.hpp>
 
-#define tryInit(func) if (!(func)) return false
-#define checkResult(var, func) \
-    try {\
-        (var) = (func);\
-    } catch (runtime_error& e) { \
-        main.log.fatal << "Couldn't create " << #var << ": " << e.what() << endl; \
-        return false; \
-    }\
-    return true
-
-#ifdef LR1_DEBUG
-#define enabledValidationLayers VulkanBackend::validationLayers
-#else
-#define enabledValidationLayers {}
-#endif
-
 using namespace std;
 
-namespace LR1_Remake {
-    const vector<char const*> VulkanBackend::validationLayers = {
-        "VK_LAYER_KHRONOS_validation"
-    };
-
-    VulkanBackend::VulkanBackend(Main &main) : main(main) {}
-
-    bool VulkanBackend::init() {
 #ifdef LR1_DEBUG
-        tryInit(checkValidationLayerSupport());
-        listExtensions();
+#define instanceValidationLayers VulkanBackend::validationLayers
+#else
+#define instanceValidationLayers {}
 #endif
 
-        tryInit(createInstance());
-
-        return true;
-    }
-
-    void VulkanBackend::cleanup() const {
-        instance.destroy();
-    }
-
+namespace LR1_Remake {
     bool VulkanBackend::createInstance() {
         constexpr uint32_t appVersion = VK_MAKE_VERSION(Version::major, Version::minor, Version::patch);
         constexpr uint32_t engineVersion = VK_MAKE_VERSION(1, 0, 0);
         constexpr vk::ApplicationInfo appInfo("LR1-Remake", appVersion, "No Engine", engineVersion, VK_API_VERSION_1_0);
 
-        vector<char const *> requiredExtensions;
+        const vector<char const *> requiredExtensions = getRequiredExtensions();
+        const vk::InstanceCreateInfo instanceCreateInfo({}, &appInfo, instanceValidationLayers, requiredExtensions);
+        checkResult(instance, vk::createInstance(instanceCreateInfo));
+    }
+
+    vector<char const *> VulkanBackend::getRequiredExtensions() {
+        vector<char const*> requiredExtensions;
         uint32_t extensionCount = 0;
         char const* const* extensions = SDL_Vulkan_GetInstanceExtensions(&extensionCount);
         for (uint32_t i = 0; i < extensionCount; i++) {
             requiredExtensions.emplace_back(extensions[i]);
         }
-        const vk::InstanceCreateInfo instanceCreateInfo({}, &appInfo, enabledValidationLayers, requiredExtensions);
-        checkResult(instance, vk::createInstance(instanceCreateInfo));
+
+        if (enableValidationLayers) requiredExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+        return requiredExtensions;
     }
 
     void VulkanBackend::listExtensions() const {

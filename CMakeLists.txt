@@ -18,7 +18,10 @@ add_executable(lr1-remake
         src/app/render.cpp
         src/app/event.cpp
         src/util/log.cpp
-        src/renderer/vulkan.cpp
+        src/renderer/vulkan/vulkan.cpp
+        src/renderer/vulkan/instance.cpp
+        src/renderer/vulkan/debug.cpp
+        src/renderer/vulkan/physicalDevice.cpp
 )
 target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan)
 target_compile_definitions(lr1-remake PUBLIC
@@ -28,4 +31,6 @@ target_compile_definitions(lr1-remake PUBLIC
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     message(STATUS "Debug Build")
     target_compile_definitions(lr1-remake PUBLIC LR1_DEBUG)
+else ()
+    set_target_properties(lr1-remake PROPERTIES WIN32_EXECUTABLE ON)
 endif ()

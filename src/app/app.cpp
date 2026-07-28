@@ -57,6 +57,8 @@ namespace LR1_Remake {
             return false;
         }
 
+        if (!vulkan.init()) return false;
+
         return true;
     }
 

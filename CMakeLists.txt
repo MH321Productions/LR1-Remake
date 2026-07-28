@@ -22,6 +22,7 @@ add_executable(lr1-remake
         src/renderer/vulkan/instance.cpp
         src/renderer/vulkan/debug.cpp
         src/renderer/vulkan/physicalDevice.cpp
+        src/renderer/vulkan/logicalDevice.cpp
 )
 target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan)
 target_compile_definitions(lr1-remake PUBLIC

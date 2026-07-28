@@ -11,6 +11,8 @@ namespace LR1_Remake {
     int Main::onExecute() {
         if (!onInit()) return 1;
 
+        log.info << "Successfully initialized" << endl;
+
         running = true;
         SDL_Event event;
         while (running) {

@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <ostream>
+#include <optional>
 
 #include <vulkan/vulkan.hpp>
 
@@ -25,6 +26,13 @@
 namespace LR1_Remake {
     class Main;
 
+    struct QueueFamilyIndices {
+        std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
+
+        [[nodiscard]] bool isComplete() const;
+    };
+
     class VulkanBackend {
         public:
             explicit VulkanBackend(Main& main);
@@ -36,6 +44,7 @@ namespace LR1_Remake {
         private:
             static const std::vector<char const*> validationLayers;
             static constexpr bool enableValidationLayers = validate;
+            static const std::vector<const char*> deviceExtensions;
 
             Main& main;
 
@@ -45,6 +54,13 @@ namespace LR1_Remake {
             const std::map<vk::DebugUtilsMessageSeverityFlagBitsEXT, std::ostream&> severityMap;
 
             vk::PhysicalDevice physicalDevice;
+            QueueFamilyIndices queueFamilyIndices;
+
+            vk::Device logicalDevice;
+            vk::Queue graphicsQueue;
+            vk::Queue presentQueue;
+
+            vk::SurfaceKHR surface;
 
             //Instance creation
             bool createInstance();
@@ -59,7 +75,16 @@ namespace LR1_Remake {
 
             //Physical Device and queue family
             bool pickPhysicalDevice();
-            int ratePhysicalDevice(const vk::PhysicalDevice& device);
+            [[nodiscard]] uint32_t ratePhysicalDevice(const vk::PhysicalDevice& device) const;
+            [[nodiscard]] QueueFamilyIndices findQueueFamilies(const vk::PhysicalDevice& device) const;
+            static bool areDeviceExtensionsSupported(const vk::PhysicalDevice& device) ;
+
+            //Logical Device
+            bool createLogicalDevice();
+            void getQueues();
+
+            //Surface
+            bool createSurface();
     };
 }
 

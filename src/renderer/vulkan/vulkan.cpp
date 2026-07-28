@@ -1,8 +1,9 @@
 #include <vector>
 
-#include <LR1-remake/renderer/vulkan.hpp>
+#include <SDL3/SDL_vulkan.h>
 
-#include "LR1-remake/app.hpp"
+#include <LR1-remake/renderer/vulkan.hpp>
+#include <LR1-remake/app.hpp>
 
 #define tryInit(func) if (!(func)) return false
 
@@ -28,13 +29,26 @@ namespace LR1_Remake {
 
         tryInit(createInstance());
         tryInit(setupDebugMessenger());
+        tryInit(createSurface());
+        tryInit(pickPhysicalDevice());
+        tryInit(createLogicalDevice());
+        getQueues();
 
         return true;
     }
 
     void VulkanBackend::cleanup() const {
+        logicalDevice.destroy();
+        SDL_Vulkan_DestroySurface(instance, surface, nullptr);
         if (enableValidationLayers) destroyDebugMessenger();
-
         instance.destroy();
+    }
+
+    bool VulkanBackend::createSurface() {
+        if (!SDL_Vulkan_CreateSurface(main.window, instance, nullptr, reinterpret_cast<VkSurfaceKHR*>(&surface))) {
+            main.log.fatal << "Couldn't create Vulkan surface: " << SDL_GetError() << endl;
+            return false;
+        }
+        return true;
     }
 }

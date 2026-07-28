@@ -10,6 +10,7 @@ union SDL_Event;
 
 namespace LR1_Remake {
     class Main {
+        friend class VulkanBackend;
         public:
             Main() : window(nullptr), mixer(nullptr), running(false), vulkan(*this) {}
 

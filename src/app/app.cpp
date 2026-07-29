@@ -46,7 +46,7 @@ namespace LR1_Remake {
             return false;
         }
 
-        window = SDL_CreateWindow("LR1-Remake", 1280, 720, SDL_WINDOW_VULKAN);
+        window = SDL_CreateWindow("LR1-Remake", 1280, 720, SDL_WINDOW_VULKAN | SDL_WINDOW_HIGH_PIXEL_DENSITY);
         if (!window) {
             log.fatal << "Couldn't create window: " << SDL_GetError() << endl;
             return false;

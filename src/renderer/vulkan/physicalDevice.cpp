@@ -56,6 +56,7 @@ namespace LR1_Remake {
         if (!features.geometryShader) return 0;                                             //We need Geometry shaders
         if (!findQueueFamilies(device).isComplete()) return 0;                              //We need the required queue families
         if (!areDeviceExtensionsSupported(device)) return 0;                                //We need the required device extensions to be supported
+        if (!querySwapChainSupport(device).isAdequate()) return 0;                          //We need swapchain support
 
         return score;
     }

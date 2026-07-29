@@ -33,6 +33,14 @@ namespace LR1_Remake {
         [[nodiscard]] bool isComplete() const;
     };
 
+    struct SwapChainSupportDetails {
+        vk::SurfaceCapabilitiesKHR capabilities;
+        std::vector<vk::SurfaceFormatKHR> formats;
+        std::vector<vk::PresentModeKHR> presentModes;
+
+        [[nodiscard]] bool isAdequate() const;
+    };
+
     class VulkanBackend {
         public:
             explicit VulkanBackend(Main& main);
@@ -62,6 +70,8 @@ namespace LR1_Remake {
 
             vk::SurfaceKHR surface;
 
+            vk::SwapchainKHR swapChain;
+
             //Instance creation
             bool createInstance();
             static std::vector<char const*> getRequiredExtensions();
@@ -85,6 +95,13 @@ namespace LR1_Remake {
 
             //Surface
             bool createSurface();
+
+            //Swap Chain
+            [[nodiscard]] SwapChainSupportDetails querySwapChainSupport(const vk::PhysicalDevice& device) const;
+            static vk::SurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<vk::SurfaceFormatKHR>& formats);
+            static vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& presentModes);
+            [[nodiscard]] vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const;
+            bool createSwapChain();
     };
 }
 

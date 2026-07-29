@@ -23,6 +23,7 @@ add_executable(lr1-remake
         src/renderer/vulkan/debug.cpp
         src/renderer/vulkan/physicalDevice.cpp
         src/renderer/vulkan/logicalDevice.cpp
+        src/renderer/vulkan/swapchain.cpp
 )
 target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan)
 target_compile_definitions(lr1-remake PUBLIC
@@ -33,5 +34,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebIn
     message(STATUS "Debug Build")
     target_compile_definitions(lr1-remake PUBLIC LR1_DEBUG)
 else ()
+    message(STATUS "Release Build")
     set_target_properties(lr1-remake PROPERTIES WIN32_EXECUTABLE ON)
 endif ()

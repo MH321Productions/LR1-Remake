@@ -33,11 +33,13 @@ namespace LR1_Remake {
         tryInit(pickPhysicalDevice());
         tryInit(createLogicalDevice());
         getQueues();
+        tryInit(createSwapChain());
 
         return true;
     }
 
     void VulkanBackend::cleanup() const {
+        logicalDevice.destroySwapchainKHR(swapChain);
         logicalDevice.destroy();
         SDL_Vulkan_DestroySurface(instance, surface, nullptr);
         if (enableValidationLayers) destroyDebugMessenger();

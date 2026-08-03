@@ -53,13 +53,57 @@ namespace LR1_Remake {
     }
 
     bool VulkanBackend::createSwapChain() {
-        SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
+        auto [capabilities, formats, presentModes] = querySwapChainSupport(physicalDevice);
 
-        const vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-        const vk::PresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        const vk::Extent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+        const vk::SurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(formats);
+        const vk::PresentModeKHR presentMode = chooseSwapPresentMode(presentModes);
+        const vk::Extent2D extent = chooseSwapExtent(capabilities);
 
+        const uint32_t neededImages = capabilities.minImageCount + 1;
+        const uint32_t maxImages = capabilities.maxImageCount;
+        const uint32_t imageCount = maxImages > 0 ? min(neededImages, maxImages) : neededImages;
 
+        vector indicesVector = {queueFamilyIndices.graphicsFamily.value(), queueFamilyIndices.presentFamily.value()};
+
+        vk::SharingMode sharingMode;
+        vk::ArrayProxyNoTemporaries<uint32_t const> indices;
+        if (queueFamilyIndices.graphicsFamily != queueFamilyIndices.presentFamily) {
+            sharingMode = vk::SharingMode::eConcurrent;
+            indices = indicesVector;
+        } else {
+            sharingMode = vk::SharingMode::eExclusive;
+            indices = {};
+        }
+
+        const vk::SwapchainCreateInfoKHR createInfo(
+            {},
+            surface,
+            imageCount,
+            surfaceFormat.format,
+            surfaceFormat.colorSpace,
+            extent,
+            1,
+            vk::ImageUsageFlagBits::eColorAttachment,
+            sharingMode,
+            indices,
+            capabilities.currentTransform,
+            vk::CompositeAlphaFlagBitsKHR::eOpaque,
+            presentMode,
+            true,
+            nullptr
+        );
+
+        try {
+            swapChain = logicalDevice.createSwapchainKHR(createInfo);
+            swapChainImages = logicalDevice.getSwapchainImagesKHR(swapChain);
+            swapChainImageFormat = surfaceFormat.format;
+            swapChainExtent = extent;
+        } catch (runtime_error& e) {
+            main.log.fatal << "Couldn't create swap chain: " << e.what();
+            return false;
+        }
+
+        return true;
     }
 
     bool SwapChainSupportDetails::isAdequate() const {

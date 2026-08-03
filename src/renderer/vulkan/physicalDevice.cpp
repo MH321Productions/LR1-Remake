@@ -34,6 +34,7 @@ namespace LR1_Remake {
 
             if (infos.front().rating > 0) {
                 physicalDevice = infos.front().device;
+                queueFamilyIndices = findQueueFamilies(infos.front().device);
                 main.log.info << "Using \"" << physicalDevice.getProperties().deviceName << "\" as GPU" << endl;
                 return true;
             }

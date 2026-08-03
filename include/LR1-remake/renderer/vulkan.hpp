@@ -71,6 +71,9 @@ namespace LR1_Remake {
             vk::SurfaceKHR surface;
 
             vk::SwapchainKHR swapChain;
+            std::vector<vk::Image> swapChainImages;
+            vk::Format swapChainImageFormat;
+            vk::Extent2D swapChainExtent;
 
             //Instance creation
             bool createInstance();

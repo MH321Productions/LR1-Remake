@@ -19,7 +19,7 @@ namespace LR1_Remake {
         {vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo, main.log.info},
         {vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning, main.log.warning},
         {vk::DebugUtilsMessageSeverityFlagBitsEXT::eError, main.log.error},
-    }) {}
+    }), swapChainImageFormat(vk::Format::eUndefined) {}
 
     bool VulkanBackend::init() {
         if (enableValidationLayers) {

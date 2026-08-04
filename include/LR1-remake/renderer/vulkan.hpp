@@ -77,6 +77,10 @@ namespace LR1_Remake {
 
             std::vector<vk::ImageView> swapChainImageViews;
 
+            vk::PipelineLayout pipelineLayout;
+            vk::Pipeline graphicsPipeline;
+            vk::RenderPass renderPass;
+
             //Instance creation
             bool createInstance();
             static std::vector<char const*> getRequiredExtensions();
@@ -112,6 +116,7 @@ namespace LR1_Remake {
             //Graphics Pipeline
             bool createGraphicsPipeline();
             vk::ShaderModule createShaderModule(const std::vector<uint8_t>& code);
+            bool createRenderPass();
     };
 }
 

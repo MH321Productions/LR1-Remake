@@ -35,12 +35,16 @@ namespace LR1_Remake {
         getQueues();
         tryInit(createSwapChain());
         tryInit(createImageViews());
+        tryInit(createRenderPass());
         tryInit(createGraphicsPipeline());
 
         return true;
     }
 
     void VulkanBackend::cleanup() const {
+        logicalDevice.destroyPipeline(graphicsPipeline);
+        logicalDevice.destroyPipelineLayout(pipelineLayout);
+        logicalDevice.destroyRenderPass(renderPass);
         for (const vk::ImageView& view: swapChainImageViews) logicalDevice.destroyImageView(view);
         logicalDevice.destroySwapchainKHR(swapChain);
         logicalDevice.destroy();

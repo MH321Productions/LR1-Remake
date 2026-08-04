@@ -106,6 +106,39 @@ namespace LR1_Remake {
         return true;
     }
 
+    bool VulkanBackend::createImageViews() {
+        for (const vk::Image& image: swapChainImages) {
+            vk::ImageViewCreateInfo createInfo(
+                {},
+                image,
+                vk::ImageViewType::e2D,
+                swapChainImageFormat,
+                vk::ComponentMapping(
+                    vk::ComponentSwizzle::eIdentity,
+                    vk::ComponentSwizzle::eIdentity,
+                    vk::ComponentSwizzle::eIdentity,
+                    vk::ComponentSwizzle::eIdentity
+                ),
+                vk::ImageSubresourceRange(
+                    vk::ImageAspectFlagBits::eColor,
+                    0,
+                    1,
+                    0,
+                    1
+                )
+            );
+
+            try {
+                swapChainImageViews.push_back(logicalDevice.createImageView(createInfo));
+            } catch (runtime_error& e) {
+                main.log.fatal << "Couldn't create image view: " << e.what() << endl;
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     bool SwapChainSupportDetails::isAdequate() const {
         return !formats.empty() && !presentModes.empty();
     }

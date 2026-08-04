@@ -34,11 +34,14 @@ namespace LR1_Remake {
         tryInit(createLogicalDevice());
         getQueues();
         tryInit(createSwapChain());
+        tryInit(createImageViews());
+        tryInit(createGraphicsPipeline());
 
         return true;
     }
 
     void VulkanBackend::cleanup() const {
+        for (const vk::ImageView& view: swapChainImageViews) logicalDevice.destroyImageView(view);
         logicalDevice.destroySwapchainKHR(swapChain);
         logicalDevice.destroy();
         SDL_Vulkan_DestroySurface(instance, surface, nullptr);

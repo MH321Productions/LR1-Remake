@@ -75,6 +75,8 @@ namespace LR1_Remake {
             vk::Format swapChainImageFormat;
             vk::Extent2D swapChainExtent;
 
+            std::vector<vk::ImageView> swapChainImageViews;
+
             //Instance creation
             bool createInstance();
             static std::vector<char const*> getRequiredExtensions();
@@ -105,6 +107,11 @@ namespace LR1_Remake {
             static vk::PresentModeKHR chooseSwapPresentMode(const std::vector<vk::PresentModeKHR>& presentModes);
             [[nodiscard]] vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const;
             bool createSwapChain();
+            bool createImageViews();
+
+            //Graphics Pipeline
+            bool createGraphicsPipeline();
+            vk::ShaderModule createShaderModule(const std::vector<uint8_t>& code);
     };
 }
 

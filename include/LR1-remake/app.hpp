@@ -1,7 +1,10 @@
 #ifndef LR1_REMAKE_APP_HPP
 #define LR1_REMAKE_APP_HPP
 
+#include <filesystem>
+
 #include <LR1-remake/util/log.hpp>
+#include <LR1-remake/util/res.hpp>
 #include <LR1-remake/renderer/vulkan.hpp>
 
 struct SDL_Window;
@@ -12,9 +15,11 @@ namespace LR1_Remake {
     class Main {
         friend class VulkanBackend;
         public:
-            Main() : window(nullptr), mixer(nullptr), running(false), vulkan(*this) {}
+            Main(const std::filesystem::path& rootDir) : res(*this), rootDir(rootDir), window(nullptr), mixer(nullptr), running(false), vulkan(*this) {}
 
             Logger log;
+            ResourceHandler res;
+            const std::filesystem::path rootDir;
 
             int onExecute();
             bool triggerQuit();

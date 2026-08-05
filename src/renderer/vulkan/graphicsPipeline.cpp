@@ -126,7 +126,8 @@ namespace LR1_Remake {
         };
         vector colorAttachmentRef{vk::AttachmentReference(0, vk::ImageLayout::eColorAttachmentOptimal)};
         vector subpass{vk::SubpassDescription({}, vk::PipelineBindPoint::eGraphics, {}, colorAttachmentRef, {}, {}, {})};
-        const vk::RenderPassCreateInfo renderPassInfo({}, colorAttachment, subpass);
+        vector dependencies{vk::SubpassDependency(vk::SubpassExternal, 0, vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput)};
+        const vk::RenderPassCreateInfo renderPassInfo({}, colorAttachment, subpass, dependencies);
 
         checkResult(renderPass, logicalDevice.createRenderPass(renderPassInfo));
     }

@@ -5,8 +5,6 @@
 #include <LR1-remake/renderer/vulkan.hpp>
 #include <LR1-remake/app.hpp>
 
-#define tryInit(func) if (!(func)) return false
-
 using namespace std;
 
 namespace LR1_Remake {
@@ -19,7 +17,7 @@ namespace LR1_Remake {
         {vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo, main.log.info},
         {vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning, main.log.warning},
         {vk::DebugUtilsMessageSeverityFlagBitsEXT::eError, main.log.error},
-    }), swapChainImageFormat(vk::Format::eUndefined) {}
+    }), swapChainImageFormat(vk::Format::eUndefined), currentFrame(0), framebufferResized(false) {}
 
     bool VulkanBackend::init() {
         if (enableValidationLayers) {
@@ -37,16 +35,28 @@ namespace LR1_Remake {
         tryInit(createImageViews());
         tryInit(createRenderPass());
         tryInit(createGraphicsPipeline());
+        tryInit(createFramebuffers());
+        tryInit(createCommandPool());
+        tryInit(createCommandBuffers());
+        tryInit(createSyncObjects());
 
         return true;
     }
 
-    void VulkanBackend::cleanup() const {
+    void VulkanBackend::cleanup() {
+        logicalDevice.waitIdle();
+
+        cleanupSwapChain();
+
+        for (uint32_t i = 0; i < maxFramesInFlight; i++) {
+            logicalDevice.destroySemaphore(imageAvailableSemaphores.at(i));
+            logicalDevice.destroySemaphore(renderFinishedSemaphores.at(i));
+            logicalDevice.destroyFence(inFlightFences.at(i));
+        }
+        logicalDevice.destroyCommandPool(commandPool);
         logicalDevice.destroyPipeline(graphicsPipeline);
         logicalDevice.destroyPipelineLayout(pipelineLayout);
         logicalDevice.destroyRenderPass(renderPass);
-        for (const vk::ImageView& view: swapChainImageViews) logicalDevice.destroyImageView(view);
-        logicalDevice.destroySwapchainKHR(swapChain);
         logicalDevice.destroy();
         SDL_Vulkan_DestroySurface(instance, surface, nullptr);
         if (enableValidationLayers) destroyDebugMessenger();

@@ -2,6 +2,6 @@
 
 namespace LR1_Remake {
     void Main::onRender() {
-        
+        vulkan.drawFrame();
     }
 }

@@ -26,6 +26,7 @@ add_executable(lr1-remake
         src/renderer/vulkan/swapchain.cpp
         src/renderer/vulkan/graphicsPipeline.cpp
         src/util/res.cpp
+        src/renderer/vulkan/drawing.cpp
 )
 target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan)
 target_compile_definitions(lr1-remake PUBLIC

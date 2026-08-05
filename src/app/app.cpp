@@ -18,6 +18,8 @@ namespace LR1_Remake {
         while (running) {
             while (SDL_PollEvent(&event)) onEvent(event);
 
+            if (paused) continue;
+
             onLoop();
             onRender();
         }
@@ -35,6 +37,24 @@ namespace LR1_Remake {
         return false;
     }
 
+    bool Main::triggerPause() {
+        if (!paused) {
+            paused = true;
+            log.debug << "Paused" << endl;
+            return true;
+        }
+        return false;
+    }
+
+    bool Main::triggerResume() {
+        if (paused) {
+            paused = false;
+            log.debug << "Resumed" << endl;
+            return true;
+        }
+        return false;
+    }
+
     bool Main::onInit() {
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD)) {
             log.fatal << "Couldn't init SDL: " << SDL_GetError() << endl;
@@ -46,7 +66,7 @@ namespace LR1_Remake {
             return false;
         }
 
-        window = SDL_CreateWindow("LR1-Remake", 1280, 720, SDL_WINDOW_VULKAN | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+        window = SDL_CreateWindow("LR1-Remake", 1280, 720, SDL_WINDOW_VULKAN | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_RESIZABLE);
         if (!window) {
             log.fatal << "Couldn't create window: " << SDL_GetError() << endl;
             return false;

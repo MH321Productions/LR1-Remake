@@ -14,6 +14,8 @@
 #define validate false
 #endif
 
+#define tryInit(func) if (!(func)) return false
+
 #define checkResult(var, func) \
     try {\
         (var) = (func);\
@@ -22,6 +24,14 @@
         return false; \
     }\
     return true
+
+#define checkFunc(func, err) \
+    try {\
+        (func);\
+    } catch (runtime_error& e) { \
+        main.log.fatal << err << ": " << e.what() << endl; \
+        return false; \
+    }
 
 namespace LR1_Remake {
     class Main;
@@ -47,12 +57,15 @@ namespace LR1_Remake {
             ~VulkanBackend() = default;
 
             bool init();
-            void cleanup() const;
+            void cleanup();
+            bool drawFrame();
+            void triggerResize();
 
         private:
             static const std::vector<char const*> validationLayers;
             static constexpr bool enableValidationLayers = validate;
             static const std::vector<const char*> deviceExtensions;
+            static constexpr uint32_t maxFramesInFlight = 3;
 
             Main& main;
 
@@ -80,6 +93,14 @@ namespace LR1_Remake {
             vk::PipelineLayout pipelineLayout;
             vk::Pipeline graphicsPipeline;
             vk::RenderPass renderPass;
+
+            std::vector<vk::Framebuffer> swapChainFrameBuffers;
+            vk::CommandPool commandPool;
+            std::vector<vk::CommandBuffer> commandBuffers;
+            std::vector<vk::Semaphore> imageAvailableSemaphores, renderFinishedSemaphores;
+            std::vector<vk::Fence> inFlightFences;
+            uint32_t currentFrame;
+            bool framebufferResized;
 
             //Instance creation
             bool createInstance();
@@ -112,11 +133,20 @@ namespace LR1_Remake {
             [[nodiscard]] vk::Extent2D chooseSwapExtent(const vk::SurfaceCapabilitiesKHR& capabilities) const;
             bool createSwapChain();
             bool createImageViews();
+            bool recreateSwapChain();
+            void cleanupSwapChain();
 
             //Graphics Pipeline
             bool createGraphicsPipeline();
             vk::ShaderModule createShaderModule(const std::vector<uint8_t>& code);
             bool createRenderPass();
+
+            //Drawing
+            bool createFramebuffers();
+            bool createCommandPool();
+            bool createCommandBuffers();
+            bool recordCommandBuffer(const vk::CommandBuffer& cmd, const uint32_t& imageIndex);
+            bool createSyncObjects();
     };
 }
 

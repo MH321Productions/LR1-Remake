@@ -139,6 +139,27 @@ namespace LR1_Remake {
         return true;
     }
 
+    void VulkanBackend::cleanupSwapChain() {
+        for (const vk::Framebuffer& framebuffer: swapChainFrameBuffers) logicalDevice.destroyFramebuffer(framebuffer);
+        for (const vk::ImageView& view: swapChainImageViews) logicalDevice.destroyImageView(view);
+        logicalDevice.destroySwapchainKHR(swapChain);
+
+        swapChainFrameBuffers.clear();
+        swapChainImageViews.clear();
+    }
+
+    bool VulkanBackend::recreateSwapChain() {
+        logicalDevice.waitIdle();
+
+        cleanupSwapChain();
+
+        tryInit(createSwapChain());
+        tryInit(createImageViews());
+        tryInit(createFramebuffers());
+
+        return true;
+    }
+
     bool SwapChainSupportDetails::isAdequate() const {
         return !formats.empty() && !presentModes.empty();
     }

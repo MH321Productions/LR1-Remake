@@ -50,8 +50,10 @@ namespace LR1_Remake {
 
         for (uint32_t i = 0; i < maxFramesInFlight; i++) {
             logicalDevice.destroySemaphore(imageAvailableSemaphores.at(i));
-            logicalDevice.destroySemaphore(renderFinishedSemaphores.at(i));
             logicalDevice.destroyFence(inFlightFences.at(i));
+        }
+        for (uint32_t i = 0; i < maxSwapChainImages; i++) {
+            logicalDevice.destroySemaphore(renderFinishedSemaphores.at(i));
         }
         logicalDevice.destroyCommandPool(commandPool);
         logicalDevice.destroyPipeline(graphicsPipeline);

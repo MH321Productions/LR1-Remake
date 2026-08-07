@@ -60,14 +60,16 @@ namespace LR1_Remake {
         constexpr vk::FenceCreateInfo fenceInfo(vk::FenceCreateFlagBits::eSignaled);
 
         imageAvailableSemaphores.reserve(maxFramesInFlight);
-        renderFinishedSemaphores.reserve(maxFramesInFlight);
+        renderFinishedSemaphores.reserve(maxSwapChainImages);
         inFlightFences.reserve(maxFramesInFlight);
 
         try {
             for (uint32_t i = 0; i < maxFramesInFlight; i++) {
                 imageAvailableSemaphores.push_back(logicalDevice.createSemaphore(semaphoreInfo));
-                renderFinishedSemaphores.push_back(logicalDevice.createSemaphore(semaphoreInfo));
                 inFlightFences.push_back(logicalDevice.createFence(fenceInfo));
+            }
+            for (uint32_t i = 0; i < maxSwapChainImages; i++) {
+                renderFinishedSemaphores.push_back(logicalDevice.createSemaphore(semaphoreInfo));
             }
         } catch (runtime_error& e) {
             main.log.fatal << "Couldn't create sync objects: " << e.what() << endl;
@@ -100,7 +102,7 @@ namespace LR1_Remake {
         vector waitSemaphores = {imageAvailableSemaphores.at(currentFrame)};
         vector<vk::PipelineStageFlags> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
         vector cmdBuffers = {commandBuffers.at(currentFrame)};
-        vector signalSemaphores = {renderFinishedSemaphores.at(currentFrame)};
+        vector signalSemaphores = {renderFinishedSemaphores.at(imageIndex)};
         const vk::SubmitInfo submitInfo(waitSemaphores, waitStages, cmdBuffers, signalSemaphores);
         checkFunc(graphicsQueue.submit(submitInfo, inFlightFences.at(currentFrame)), "Couldn't submit the draw command buffer");
 

@@ -65,7 +65,8 @@ namespace LR1_Remake {
             static const std::vector<char const*> validationLayers;
             static constexpr bool enableValidationLayers = validate;
             static const std::vector<const char*> deviceExtensions;
-            static constexpr uint32_t maxFramesInFlight = 3;
+            static constexpr uint32_t maxFramesInFlight = 2;
+            static constexpr uint32_t maxSwapChainImages = 3;
 
             Main& main;
 

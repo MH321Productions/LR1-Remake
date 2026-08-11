@@ -4,7 +4,7 @@
 using namespace std;
 
 namespace LR1_Remake {
-    bool VulkanBackend::createGraphicsPipeline() {
+    bool VulkanBackend::createGraphicsPipeline(const std::vector<vk::VertexInputBindingDescription>& vertexBindingDescriptions, const std::vector<vk::VertexInputAttributeDescription>& vertexAttributeDescriptions) {
         const vector<uint8_t> vertexCode = main.res.loadResource("first", ResourceType::VertexShader);
         const vector<uint8_t> fragmentCode = main.res.loadResource("first", ResourceType::FragmentShader);
 
@@ -20,8 +20,6 @@ namespace LR1_Remake {
             vector dynamicPipelineStages = {vk::DynamicState::eViewport, vk::DynamicState::eScissor};
             vk::PipelineDynamicStateCreateInfo dynamicState({}, dynamicPipelineStages);
 
-            vector<vk::VertexInputBindingDescription> vertexBindingDescriptions; //TODO: Fill in buffer data later
-            vector<vk::VertexInputAttributeDescription> vertexAttributeDescriptions;
             vk::PipelineVertexInputStateCreateInfo vertexInputInfo({}, vertexBindingDescriptions, vertexAttributeDescriptions);
 
             vk::PipelineInputAssemblyStateCreateInfo inputAssembly({}, vk::PrimitiveTopology::eTriangleList, false);

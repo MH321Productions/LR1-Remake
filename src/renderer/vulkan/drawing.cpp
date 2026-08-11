@@ -47,6 +47,10 @@ namespace LR1_Remake {
         cmd.setViewport(0, viewport);
         cmd.setScissor(0, scissor);
 
+        const vector vertexBuffers = {vertexBuffer};
+        const vector<vk::DeviceSize> offsets = {0};
+        cmd.bindVertexBuffers(0, vertexBuffers, offsets);
+
         cmd.draw(3, 1, 0, 0); //This is it
 
         cmd.endRenderPass();

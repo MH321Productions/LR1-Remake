@@ -34,9 +34,10 @@ namespace LR1_Remake {
         tryInit(createSwapChain());
         tryInit(createImageViews());
         tryInit(createRenderPass());
-        tryInit(createGraphicsPipeline());
+        tryInit(createGraphicsPipeline<Simple2DColorVertex>());
         tryInit(createFramebuffers());
         tryInit(createCommandPool());
+        tryInit(createVertexBuffer());
         tryInit(createCommandBuffers());
         tryInit(createSyncObjects());
 
@@ -55,6 +56,8 @@ namespace LR1_Remake {
         for (uint32_t i = 0; i < maxSwapChainImages; i++) {
             logicalDevice.destroySemaphore(renderFinishedSemaphores.at(i));
         }
+        logicalDevice.freeMemory(vertexBufferMemory);
+        logicalDevice.destroyBuffer(vertexBuffer);
         logicalDevice.destroyCommandPool(commandPool);
         logicalDevice.destroyPipeline(graphicsPipeline);
         logicalDevice.destroyPipelineLayout(pipelineLayout);

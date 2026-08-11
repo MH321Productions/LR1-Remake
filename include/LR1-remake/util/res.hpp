@@ -22,14 +22,21 @@ namespace LR1_Remake {
         std::string extension;
     };
 
+    struct Resource {
+        std::string name;
+        ResourceType type;
+    };
+
     class ResourceHandler {
         public:
             explicit ResourceHandler(Main& main) : main(main) {}
 
             [[nodiscard]] std::filesystem::path getResourcePath(const std::string& name, ResourceType type = ResourceType::Undefined) const;
+            [[nodiscard]] std::filesystem::path getResourcePath(const Resource& res) const { return getResourcePath(res.name, res.type); }
 
             [[nodiscard]] static std::vector<uint8_t> loadResource(const std::filesystem::path& filepath);
             [[nodiscard]] std::vector<uint8_t> loadResource(const std::string& name, const ResourceType type = ResourceType::Undefined) const { return loadResource(getResourcePath(name, type)); }
+            [[nodiscard]] std::vector<uint8_t> loadResource(const Resource& res) const { return loadResource(getResourcePath(res)); }
 
         private:
             static const std::array<ResourceInfo, static_cast<size_t>(ResourceType::Undefined)> infos;

@@ -8,6 +8,8 @@
 
 #include <vulkan/vulkan.hpp>
 
+#include <LR1-remake/renderer/data.hpp>
+
 #ifdef LR1_DEBUG
 #define validate true
 #else
@@ -29,7 +31,7 @@
     try {\
         (func);\
     } catch (runtime_error& e) { \
-        main.log.fatal << err << ": " << e.what() << endl; \
+        main.log.fatal << (err) << ": " << e.what() << endl; \
         return false; \
     }
 
@@ -103,6 +105,9 @@ namespace LR1_Remake {
             uint32_t currentFrame;
             bool framebufferResized;
 
+            vk::Buffer vertexBuffer;
+            vk::DeviceMemory vertexBufferMemory;
+
             //Instance creation
             bool createInstance();
             static std::vector<char const*> getRequiredExtensions();
@@ -138,7 +143,8 @@ namespace LR1_Remake {
             void cleanupSwapChain();
 
             //Graphics Pipeline
-            bool createGraphicsPipeline();
+            bool createGraphicsPipeline(const std::vector<vk::VertexInputBindingDescription>& vertexBindingDescriptions, const std::vector<vk::VertexInputAttributeDescription>& vertexAttributeDescriptions);
+            template <IVertex TData> bool createGraphicsPipeline() { return createGraphicsPipeline(TData::bindingDescriptions, TData::attributeDescriptions); }
             vk::ShaderModule createShaderModule(const std::vector<uint8_t>& code);
             bool createRenderPass();
 
@@ -148,6 +154,12 @@ namespace LR1_Remake {
             bool createCommandBuffers();
             bool recordCommandBuffer(const vk::CommandBuffer& cmd, const uint32_t& imageIndex);
             bool createSyncObjects();
+
+            //Buffers
+            bool createBuffer(const vk::DeviceSize& size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory) const;
+            bool createVertexBuffer();
+            [[nodiscard]] uint32_t findMemoryType(const uint32_t& typeFilter, vk::MemoryPropertyFlags properties) const;
+            void copyBuffer(const vk::Buffer& srcBuffer, const vk::Buffer& dstBuffer, const vk::DeviceSize& size) const;
     };
 }
 

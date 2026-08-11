@@ -18,6 +18,8 @@ add_executable(lr1-remake
         src/app/render.cpp
         src/app/event.cpp
         src/util/log.cpp
+        src/util/res.cpp
+        include/LR1-remake/renderer/vulkan.hpp
         src/renderer/vulkan/vulkan.cpp
         src/renderer/vulkan/instance.cpp
         src/renderer/vulkan/debug.cpp
@@ -25,8 +27,10 @@ add_executable(lr1-remake
         src/renderer/vulkan/logicalDevice.cpp
         src/renderer/vulkan/swapchain.cpp
         src/renderer/vulkan/graphicsPipeline.cpp
-        src/util/res.cpp
         src/renderer/vulkan/drawing.cpp
+        src/renderer/vulkan/buffer.cpp
+        include/LR1-remake/renderer/data.hpp
+        src/renderer/data/vertexData.cpp
 )
 target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan)
 target_compile_definitions(lr1-remake PUBLIC

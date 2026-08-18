@@ -5,10 +5,13 @@ using namespace std;
 
 namespace LR1_Remake {
     const std::vector<Simple2DColorVertex> vertices = {
-        {{0.0f, -0.5f}, {1.0f, 1.0f, 1.0f}},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
     };
+
+    const vector<uint32_t> VulkanBackend::indices = {0, 1, 2, 2, 3, 0};
 
     bool VulkanBackend::createBuffer(const vk::DeviceSize& size, const vk::BufferUsageFlags usage, const vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory) const {
         const vk::BufferCreateInfo bufferInfo({}, size, usage, vk::SharingMode::eExclusive);
@@ -41,6 +44,41 @@ namespace LR1_Remake {
 
         logicalDevice.destroyBuffer(stagingBuffer);
         logicalDevice.freeMemory(stagingBufferMemory);
+
+        return true;
+    }
+
+    bool VulkanBackend::createIndexBuffer() {
+        const vk::DeviceSize bufferSize = sizeof(uint32_t) * indices.size();
+
+        vk::Buffer stagingBuffer;
+        vk::DeviceMemory stagingBufferMemory;
+        createBuffer(bufferSize, vk::BufferUsageFlagBits::eTransferSrc, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, stagingBuffer, stagingBufferMemory);
+
+        void* data = logicalDevice.mapMemory(stagingBufferMemory, 0, bufferSize);
+        memcpy(data, indices.data(), bufferSize);
+        logicalDevice.unmapMemory(stagingBufferMemory);
+
+        createBuffer(bufferSize, vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer, vk::MemoryPropertyFlagBits::eDeviceLocal, indexBuffer, indexBufferMemory);
+        copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+
+        logicalDevice.destroyBuffer(stagingBuffer);
+        logicalDevice.free(stagingBufferMemory);
+
+        return true;
+    }
+
+    bool VulkanBackend::createUniformBuffers() {
+        vk::DeviceSize bufferSize = sizeof(UniformBufferObject);
+
+        uniformBuffers.resize(maxFramesInFlight);
+        uniformBufferMemories.resize(maxFramesInFlight);
+        mappedUniformBuffers.resize(maxFramesInFlight);
+
+        for (int i = 0; i < maxFramesInFlight; i++) {
+            createBuffer(bufferSize, vk::BufferUsageFlagBits::eUniformBuffer, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, uniformBuffers.at(i), uniformBufferMemories.at(i));
+            mappedUniformBuffers.at(i) = logicalDevice.mapMemory(uniformBufferMemories.at(i), 0, bufferSize);
+        }
 
         return true;
     }

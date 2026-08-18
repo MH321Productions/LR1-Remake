@@ -34,10 +34,13 @@ namespace LR1_Remake {
         tryInit(createSwapChain());
         tryInit(createImageViews());
         tryInit(createRenderPass());
+        tryInit(createDescriptorSetLayout());
         tryInit(createGraphicsPipeline<Simple2DColorVertex>());
         tryInit(createFramebuffers());
         tryInit(createCommandPool());
         tryInit(createVertexBuffer());
+        tryInit(createIndexBuffer());
+        tryInit(createUniformBuffers());
         tryInit(createCommandBuffers());
         tryInit(createSyncObjects());
 
@@ -52,15 +55,20 @@ namespace LR1_Remake {
         for (uint32_t i = 0; i < maxFramesInFlight; i++) {
             logicalDevice.destroySemaphore(imageAvailableSemaphores.at(i));
             logicalDevice.destroyFence(inFlightFences.at(i));
+            logicalDevice.destroyBuffer(uniformBuffers.at(i));
+            logicalDevice.freeMemory(uniformBufferMemories.at(i));
         }
         for (uint32_t i = 0; i < maxSwapChainImages; i++) {
             logicalDevice.destroySemaphore(renderFinishedSemaphores.at(i));
         }
-        logicalDevice.freeMemory(vertexBufferMemory);
+        logicalDevice.destroyBuffer(indexBuffer);
+        logicalDevice.freeMemory(indexBufferMemory);
         logicalDevice.destroyBuffer(vertexBuffer);
+        logicalDevice.freeMemory(vertexBufferMemory);
         logicalDevice.destroyCommandPool(commandPool);
         logicalDevice.destroyPipeline(graphicsPipeline);
         logicalDevice.destroyPipelineLayout(pipelineLayout);
+        logicalDevice.destroyDescriptorSetLayout(descriptorSetLayout);
         logicalDevice.destroyRenderPass(renderPass);
         logicalDevice.destroy();
         SDL_Vulkan_DestroySurface(instance, surface, nullptr);

@@ -1,11 +1,17 @@
 #include <limits>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <LR1-remake/renderer/vulkan.hpp>
 #include <LR1-remake/app.hpp>
 
 using namespace std;
+using namespace std::chrono;
 
 namespace LR1_Remake {
+    const time_point<high_resolution_clock> VulkanBackend::startTime = high_resolution_clock::now();
+
     bool VulkanBackend::createFramebuffers() {
         swapChainFrameBuffers.reserve(swapChainImageViews.size());
         try {
@@ -50,8 +56,9 @@ namespace LR1_Remake {
         const vector vertexBuffers = {vertexBuffer};
         const vector<vk::DeviceSize> offsets = {0};
         cmd.bindVertexBuffers(0, vertexBuffers, offsets);
+        cmd.bindIndexBuffer(indexBuffer, 0, vk::IndexType::eUint32);
 
-        cmd.draw(3, 1, 0, 0); //This is it
+        cmd.drawIndexed(indices.size(), 1, 0, 0, 0); //This is it
 
         cmd.endRenderPass();
         checkFunc(cmd.end(), "Couldn't end command buffer recording");
@@ -102,6 +109,7 @@ namespace LR1_Remake {
 
         commandBuffers.at(currentFrame).reset();
         recordCommandBuffer(commandBuffers.at(currentFrame), imageIndex);
+        updateUniformBuffer(currentFrame);
 
         vector waitSemaphores = {imageAvailableSemaphores.at(currentFrame)};
         vector<vk::PipelineStageFlags> waitStages = {vk::PipelineStageFlagBits::eColorAttachmentOutput};
@@ -129,5 +137,13 @@ namespace LR1_Remake {
 
     void VulkanBackend::triggerResize() {
         framebufferResized = true;
+    }
+
+    void VulkanBackend::updateUniformBuffer(const uint32_t &currentImage) {
+        const time_point<high_resolution_clock> currentTime = high_resolution_clock::now();
+        const duration<double> dur = currentTime - startTime;
+        double time = dur.count();
+
+
     }
 }

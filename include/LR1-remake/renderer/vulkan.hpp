@@ -5,6 +5,7 @@
 #include <map>
 #include <ostream>
 #include <optional>
+#include <chrono>
 
 #include <vulkan/vulkan.hpp>
 
@@ -69,6 +70,8 @@ namespace LR1_Remake {
             static const std::vector<const char*> deviceExtensions;
             static constexpr uint32_t maxFramesInFlight = 2;
             static constexpr uint32_t maxSwapChainImages = 3;
+            static const std::vector<uint32_t> indices;
+            static const std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 
             Main& main;
 
@@ -93,6 +96,7 @@ namespace LR1_Remake {
 
             std::vector<vk::ImageView> swapChainImageViews;
 
+            vk::DescriptorSetLayout descriptorSetLayout;
             vk::PipelineLayout pipelineLayout;
             vk::Pipeline graphicsPipeline;
             vk::RenderPass renderPass;
@@ -107,6 +111,11 @@ namespace LR1_Remake {
 
             vk::Buffer vertexBuffer;
             vk::DeviceMemory vertexBufferMemory;
+            vk::Buffer indexBuffer;
+            vk::DeviceMemory indexBufferMemory;
+            std::vector<vk::Buffer> uniformBuffers;
+            std::vector<vk::DeviceMemory> uniformBufferMemories;
+            std::vector<void*> mappedUniformBuffers;
 
             //Instance creation
             bool createInstance();
@@ -143,9 +152,10 @@ namespace LR1_Remake {
             void cleanupSwapChain();
 
             //Graphics Pipeline
+            bool createDescriptorSetLayout();
             bool createGraphicsPipeline(const std::vector<vk::VertexInputBindingDescription>& vertexBindingDescriptions, const std::vector<vk::VertexInputAttributeDescription>& vertexAttributeDescriptions);
             template <IVertex TData> bool createGraphicsPipeline() { return createGraphicsPipeline(TData::bindingDescriptions, TData::attributeDescriptions); }
-            vk::ShaderModule createShaderModule(const std::vector<uint8_t>& code);
+            vk::ShaderModule createShaderModule(const std::vector<uint8_t>& code) const;
             bool createRenderPass();
 
             //Drawing
@@ -154,10 +164,13 @@ namespace LR1_Remake {
             bool createCommandBuffers();
             bool recordCommandBuffer(const vk::CommandBuffer& cmd, const uint32_t& imageIndex);
             bool createSyncObjects();
+            void updateUniformBuffer(const uint32_t& currentImage);
 
             //Buffers
             bool createBuffer(const vk::DeviceSize& size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory) const;
             bool createVertexBuffer();
+            bool createIndexBuffer();
+            bool createUniformBuffers();
             [[nodiscard]] uint32_t findMemoryType(const uint32_t& typeFilter, vk::MemoryPropertyFlags properties) const;
             void copyBuffer(const vk::Buffer& srcBuffer, const vk::Buffer& dstBuffer, const vk::DeviceSize& size) const;
     };

@@ -64,9 +64,8 @@ namespace LR1_Remake {
             };
             vk::PipelineColorBlendStateCreateInfo colorBlending({}, false, vk::LogicOp::eCopy, colorBlendAttachment, {0.0f, 0.0f, 0.0f, 0.0f});
 
-            vector<vk::DescriptorSetLayout> descriptorSetLayouts;
             vector<vk::PushConstantRange> pushConstantRanges;
-            vk::PipelineLayoutCreateInfo pipelineLayoutInfo({}, descriptorSetLayouts, pushConstantRanges);
+            vk::PipelineLayoutCreateInfo pipelineLayoutInfo({}, descriptorSetLayout, pushConstantRanges);
             pipelineLayout = logicalDevice.createPipelineLayout(pipelineLayoutInfo);
 
             vk::GraphicsPipelineCreateInfo pipelineInfo(
@@ -103,7 +102,13 @@ namespace LR1_Remake {
         return true;
     }
 
-    vk::ShaderModule VulkanBackend::createShaderModule(const vector<uint8_t>& code) {
+    bool VulkanBackend::createDescriptorSetLayout() {
+        vk::DescriptorSetLayoutBinding uboLayoutBinding(0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex, nullptr);
+        const vk::DescriptorSetLayoutCreateInfo layoutInfo({}, uboLayoutBinding);
+        checkResult(descriptorSetLayout, logicalDevice.createDescriptorSetLayout(layoutInfo));
+    }
+
+    vk::ShaderModule VulkanBackend::createShaderModule(const vector<uint8_t>& code) const {
         const vk::ShaderModuleCreateInfo createInfo({}, code.size(), reinterpret_cast<uint32_t const *>(code.data()));
         return logicalDevice.createShaderModule(createInfo);
     }

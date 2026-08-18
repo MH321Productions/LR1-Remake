@@ -8,6 +8,12 @@
 #include <glm/glm.hpp>
 
 namespace LR1_Remake {
+    struct UniformBufferObject {
+        glm::mat4 model;
+        glm::mat4 view;
+        glm::mat4 proj;
+    };
+
     template<typename TData>
     concept IVertex = requires
     {

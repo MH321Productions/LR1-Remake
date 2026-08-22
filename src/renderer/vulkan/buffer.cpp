@@ -69,14 +69,13 @@ namespace LR1_Remake {
     }
 
     bool VulkanBackend::createUniformBuffers() {
-        vk::DeviceSize bufferSize = sizeof(UniformBufferObject);
-
         uniformBuffers.resize(maxFramesInFlight);
         uniformBufferMemories.resize(maxFramesInFlight);
         mappedUniformBuffers.resize(maxFramesInFlight);
 
         for (int i = 0; i < maxFramesInFlight; i++) {
-            createBuffer(bufferSize, vk::BufferUsageFlagBits::eUniformBuffer, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, uniformBuffers.at(i), uniformBufferMemories.at(i));
+            constexpr vk::DeviceSize bufferSize = sizeof(UniformBufferObject);
+            if (!createBuffer(bufferSize, vk::BufferUsageFlagBits::eUniformBuffer, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, uniformBuffers.at(i), uniformBufferMemories.at(i))) return false;
             mappedUniformBuffers.at(i) = logicalDevice.mapMemory(uniformBufferMemories.at(i), 0, bufferSize);
         }
 
@@ -94,13 +93,12 @@ namespace LR1_Remake {
         const vk::DescriptorSetAllocateInfo allocInfo(descriptorPool, layouts);
         checkFunc(descriptorSets = logicalDevice.allocateDescriptorSets(allocInfo), "Couldn't allocate descriptor sets");
 
-        vector<vk::WriteDescriptorSet> descriptorWrites;
         for (size_t i = 0; i < maxFramesInFlight; i++) {
             vk::DescriptorBufferInfo bufferInfo(uniformBuffers.at(i), 0, sizeof(UniformBufferObject));
-            descriptorWrites.push_back({descriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}});
+            vk::WriteDescriptorSet writeInfo(descriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {});
+            logicalDevice.updateDescriptorSets(writeInfo, {});
         }
 
-        logicalDevice.updateDescriptorSets(descriptorWrites, {});
         return true;
     }
 

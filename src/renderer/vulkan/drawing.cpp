@@ -139,7 +139,7 @@ namespace LR1_Remake {
     }
 
     void VulkanBackend::updateUniformBuffer(const uint32_t &currentImage) {
-        static time_point<high_resolution_clock> startTime;
+        static time_point<high_resolution_clock> startTime = high_resolution_clock::now();
 
         const time_point<high_resolution_clock> currentTime = high_resolution_clock::now();
         const duration<float> dur = currentTime - startTime;

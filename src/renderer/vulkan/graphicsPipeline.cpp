@@ -32,7 +32,7 @@ namespace LR1_Remake {
                 false,
                 vk::PolygonMode::eFill,
                 vk::CullModeFlagBits::eBack,
-                vk::FrontFace::eClockwise,
+                vk::FrontFace::eCounterClockwise,
                 false,
                 0.0f,
                 0.0f,

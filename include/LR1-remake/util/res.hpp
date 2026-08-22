@@ -13,6 +13,7 @@ namespace LR1_Remake {
     enum class ResourceType: uint8_t {
         VertexShader,
         FragmentShader,
+        Texture,
 
         Undefined
     };

@@ -69,7 +69,7 @@ namespace LR1_Remake {
             static constexpr bool enableValidationLayers = validate;
             static const std::vector<const char*> deviceExtensions;
             static constexpr uint32_t maxFramesInFlight = 2;
-            static constexpr uint32_t maxSwapChainImages = 3;
+            static constexpr uint32_t maxSwapChainImages = 4;
             static const std::vector<uint32_t> indices;
 
             Main& main;
@@ -117,6 +117,9 @@ namespace LR1_Remake {
             std::vector<void*> mappedUniformBuffers;
             vk::DescriptorPool descriptorPool;
             std::vector<vk::DescriptorSet> descriptorSets;
+
+            vk::Image textureImage;
+            vk::DeviceMemory textureImageMemory;
 
             //Instance creation
             bool createInstance();
@@ -176,6 +179,10 @@ namespace LR1_Remake {
             bool createDescriptorSets();
             [[nodiscard]] uint32_t findMemoryType(const uint32_t& typeFilter, vk::MemoryPropertyFlags properties) const;
             void copyBuffer(const vk::Buffer& srcBuffer, const vk::Buffer& dstBuffer, const vk::DeviceSize& size) const;
+
+            //Textures
+            bool createImage(const uint32_t& width, const uint32_t& height, vk::Format format, vk::ImageTiling tiling, const vk::ImageUsageFlags& usage, const vk::MemoryPropertyFlags& properties, vk::Image& image, vk::DeviceMemory& imageMemory) const;
+            bool createTextureImage();
     };
 }
 

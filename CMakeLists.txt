@@ -9,6 +9,8 @@ find_package(SDL3_mixer REQUIRED)
 find_package(glm REQUIRED)
 find_package(Vulkan REQUIRED COMPONENTS glslc)
 
+#TODO: Implement stb as a dependency (maybe via FetchContent)
+
 include_directories(include)
 
 add_executable(lr1-remake
@@ -19,6 +21,7 @@ add_executable(lr1-remake
         src/app/event.cpp
         src/util/log.cpp
         src/util/res.cpp
+        src/util/stbImpl.cpp
         include/LR1-remake/renderer/vulkan.hpp
         src/renderer/vulkan/vulkan.cpp
         src/renderer/vulkan/instance.cpp
@@ -29,6 +32,7 @@ add_executable(lr1-remake
         src/renderer/vulkan/graphicsPipeline.cpp
         src/renderer/vulkan/drawing.cpp
         src/renderer/vulkan/buffer.cpp
+        src/renderer/vulkan/texture.cpp
         include/LR1-remake/renderer/data.hpp
         src/renderer/data/vertexData.cpp
 )

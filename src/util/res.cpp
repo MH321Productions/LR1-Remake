@@ -9,7 +9,8 @@ using namespace std::filesystem;
 namespace LR1_Remake {
     const array<ResourceInfo, static_cast<size_t>(ResourceType::Undefined)> ResourceHandler::infos = {{
         {.folder = "shaders", .extension = ".vert.spv"},
-        {.folder = "shaders", .extension = ".frag.spv"}
+        {.folder = "shaders", .extension = ".frag.spv"},
+        {.folder = "textures", .extension = ".jpg"}
     }};
 
     path ResourceHandler::getResourcePath(const string& name, ResourceType type) const {

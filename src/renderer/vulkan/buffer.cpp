@@ -83,6 +83,27 @@ namespace LR1_Remake {
         return true;
     }
 
+    bool VulkanBackend::createDescriptorPool() {
+        vk::DescriptorPoolSize poolSize(vk::DescriptorType::eUniformBuffer, maxFramesInFlight);
+        const vk::DescriptorPoolCreateInfo poolInfo({}, maxFramesInFlight, poolSize);
+        checkResult(descriptorPool, logicalDevice.createDescriptorPool(poolInfo));
+    }
+
+    bool VulkanBackend::createDescriptorSets() {
+        vector layouts(maxFramesInFlight, descriptorSetLayout);
+        const vk::DescriptorSetAllocateInfo allocInfo(descriptorPool, layouts);
+        checkFunc(descriptorSets = logicalDevice.allocateDescriptorSets(allocInfo), "Couldn't allocate descriptor sets");
+
+        vector<vk::WriteDescriptorSet> descriptorWrites;
+        for (size_t i = 0; i < maxFramesInFlight; i++) {
+            vk::DescriptorBufferInfo bufferInfo(uniformBuffers.at(i), 0, sizeof(UniformBufferObject));
+            descriptorWrites.push_back({descriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}});
+        }
+
+        logicalDevice.updateDescriptorSets(descriptorWrites, {});
+        return true;
+    }
+
     uint32_t VulkanBackend::findMemoryType(const uint32_t& typeFilter, const vk::MemoryPropertyFlags properties) const {
         const vk::PhysicalDeviceMemoryProperties memProperties = physicalDevice.getMemoryProperties();
         for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {

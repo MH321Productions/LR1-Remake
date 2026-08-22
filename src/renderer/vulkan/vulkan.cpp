@@ -41,6 +41,8 @@ namespace LR1_Remake {
         tryInit(createVertexBuffer());
         tryInit(createIndexBuffer());
         tryInit(createUniformBuffers());
+        tryInit(createDescriptorPool());
+        tryInit(createDescriptorSets());
         tryInit(createCommandBuffers());
         tryInit(createSyncObjects());
 
@@ -68,6 +70,7 @@ namespace LR1_Remake {
         logicalDevice.destroyCommandPool(commandPool);
         logicalDevice.destroyPipeline(graphicsPipeline);
         logicalDevice.destroyPipelineLayout(pipelineLayout);
+        logicalDevice.destroyDescriptorPool(descriptorPool);
         logicalDevice.destroyDescriptorSetLayout(descriptorSetLayout);
         logicalDevice.destroyRenderPass(renderPass);
         logicalDevice.destroy();

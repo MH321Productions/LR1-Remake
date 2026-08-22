@@ -71,7 +71,6 @@ namespace LR1_Remake {
             static constexpr uint32_t maxFramesInFlight = 2;
             static constexpr uint32_t maxSwapChainImages = 3;
             static const std::vector<uint32_t> indices;
-            static const std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
 
             Main& main;
 
@@ -116,6 +115,8 @@ namespace LR1_Remake {
             std::vector<vk::Buffer> uniformBuffers;
             std::vector<vk::DeviceMemory> uniformBufferMemories;
             std::vector<void*> mappedUniformBuffers;
+            vk::DescriptorPool descriptorPool;
+            std::vector<vk::DescriptorSet> descriptorSets;
 
             //Instance creation
             bool createInstance();
@@ -171,6 +172,8 @@ namespace LR1_Remake {
             bool createVertexBuffer();
             bool createIndexBuffer();
             bool createUniformBuffers();
+            bool createDescriptorPool();
+            bool createDescriptorSets();
             [[nodiscard]] uint32_t findMemoryType(const uint32_t& typeFilter, vk::MemoryPropertyFlags properties) const;
             void copyBuffer(const vk::Buffer& srcBuffer, const vk::Buffer& dstBuffer, const vk::DeviceSize& size) const;
     };

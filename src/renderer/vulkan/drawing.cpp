@@ -10,8 +10,6 @@ using namespace std;
 using namespace std::chrono;
 
 namespace LR1_Remake {
-    const time_point<high_resolution_clock> VulkanBackend::startTime = high_resolution_clock::now();
-
     bool VulkanBackend::createFramebuffers() {
         swapChainFrameBuffers.reserve(swapChainImageViews.size());
         try {
@@ -57,6 +55,7 @@ namespace LR1_Remake {
         const vector<vk::DeviceSize> offsets = {0};
         cmd.bindVertexBuffers(0, vertexBuffers, offsets);
         cmd.bindIndexBuffer(indexBuffer, 0, vk::IndexType::eUint32);
+        cmd.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipelineLayout, 0, descriptorSets.at(currentFrame), {});
 
         cmd.drawIndexed(indices.size(), 1, 0, 0, 0); //This is it
 
@@ -140,10 +139,19 @@ namespace LR1_Remake {
     }
 
     void VulkanBackend::updateUniformBuffer(const uint32_t &currentImage) {
+        static time_point<high_resolution_clock> startTime;
+
         const time_point<high_resolution_clock> currentTime = high_resolution_clock::now();
-        const duration<double> dur = currentTime - startTime;
-        double time = dur.count();
+        const duration<float> dur = currentTime - startTime;
+        const float time = dur.count();
 
+        UniformBufferObject ubo(
+            glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+            glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+            glm::perspective(glm::radians(45.0f), swapChainExtent.width / static_cast<float>(swapChainExtent.height), 0.1f, 10.0f)
+        );
+        ubo.proj[1][1] *= -1;
 
+        memcpy(mappedUniformBuffers.at(currentImage), &ubo, sizeof(ubo));
     }
 }

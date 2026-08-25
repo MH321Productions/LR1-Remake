@@ -63,3 +63,10 @@ endforeach ()
 
 add_custom_target(compiledShaders DEPENDS ${compiledShaderFiles})
 add_dependencies(lr1-remake compiledShaders)
+
+#Copy resources
+add_custom_command(
+        TARGET lr1-remake POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/res/textures/ $<TARGET_FILE_DIR:lr1-remake>/res/textures
+)

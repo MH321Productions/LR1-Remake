@@ -108,7 +108,7 @@ namespace LR1_Remake {
 
     bool VulkanBackend::createImageViews() {
         for (const vk::Image& image: swapChainImages) {
-            vk::ImageViewCreateInfo createInfo(
+            /*vk::ImageViewCreateInfo createInfo(
                 {},
                 image,
                 vk::ImageViewType::e2D,
@@ -126,10 +126,11 @@ namespace LR1_Remake {
                     0,
                     1
                 )
-            );
+            );*/
 
             try {
-                swapChainImageViews.push_back(logicalDevice.createImageView(createInfo));
+                //swapChainImageViews.push_back(logicalDevice.createImageView(createInfo));
+                swapChainImageViews.push_back(createImageView(image, swapChainImageFormat));
             } catch (runtime_error& e) {
                 main.log.fatal << "Couldn't create image view: " << e.what() << endl;
                 return false;

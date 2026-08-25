@@ -13,8 +13,11 @@ namespace LR1_Remake {
         vector<vk::DeviceQueueCreateInfo> queueCreateInfos;
         for (const uint32_t& queueFamily : uniqueQueueFamilies) queueCreateInfos.push_back({{}, queueFamily, queuePriorities});
 
-        constexpr vk::PhysicalDeviceFeatures physicalDeviceFeatures{};
-        const vk::DeviceCreateInfo deviceCreateInfo({}, queueCreateInfos, {}, deviceExtensions, &physicalDeviceFeatures);
+        vk::PhysicalDeviceFeatures actualPhysicalDeviceFeatures = physicalDevice.getFeatures();
+        vk::PhysicalDeviceFeatures requestedPhysicalDeviceFeatures{};
+        requestedPhysicalDeviceFeatures.samplerAnisotropy = actualPhysicalDeviceFeatures.samplerAnisotropy; //Only request anisotropic filtering when it's available
+
+        const vk::DeviceCreateInfo deviceCreateInfo({}, queueCreateInfos, {}, deviceExtensions, &requestedPhysicalDeviceFeatures);
 
         checkResult(logicalDevice, physicalDevice.createDevice(deviceCreateInfo));
     }

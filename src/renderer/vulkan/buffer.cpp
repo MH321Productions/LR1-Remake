@@ -112,13 +112,24 @@ namespace LR1_Remake {
     }
 
     void VulkanBackend::copyBuffer(const vk::Buffer& srcBuffer, const vk::Buffer& dstBuffer, const vk::DeviceSize& size) const {
+        const vk::CommandBuffer commandBuffer = beginSingleTimeCommands();
+
+        const vk::BufferCopy copyRegion(0, 0, size);
+        commandBuffer.copyBuffer(srcBuffer, dstBuffer, copyRegion);
+
+        endSingleTimeCommands(commandBuffer);
+    }
+
+    vk::CommandBuffer VulkanBackend::beginSingleTimeCommands() const {
         const vk::CommandBufferAllocateInfo allocInfo(commandPool, vk::CommandBufferLevel::ePrimary, 1);
         const vk::CommandBuffer commandBuffer = logicalDevice.allocateCommandBuffers(allocInfo).front();
         constexpr vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
-        const vk::BufferCopy copyRegion(0, 0, size);
-
         commandBuffer.begin(beginInfo);
-        commandBuffer.copyBuffer(srcBuffer, dstBuffer, copyRegion);
+
+        return commandBuffer;
+    }
+
+    void VulkanBackend::endSingleTimeCommands(const vk::CommandBuffer& commandBuffer) const {
         commandBuffer.end();
 
         const vk::SubmitInfo submitInfo({}, {}, commandBuffer, {});

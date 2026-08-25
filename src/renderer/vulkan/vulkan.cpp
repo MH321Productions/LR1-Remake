@@ -39,6 +39,8 @@ namespace LR1_Remake {
         tryInit(createFramebuffers());
         tryInit(createCommandPool());
         tryInit(createTextureImage());
+        tryInit(createTextureImageView());
+        tryInit(createTextureSampler());
         tryInit(createVertexBuffer());
         tryInit(createIndexBuffer());
         tryInit(createUniformBuffers());
@@ -54,6 +56,11 @@ namespace LR1_Remake {
         logicalDevice.waitIdle();
 
         cleanupSwapChain();
+
+        logicalDevice.destroySampler(textureSampler);
+        logicalDevice.destroyImageView(textureImageView);
+        logicalDevice.destroyImage(textureImage);
+        logicalDevice.freeMemory(textureImageMemory);
 
         for (uint32_t i = 0; i < maxFramesInFlight; i++) {
             logicalDevice.destroySemaphore(imageAvailableSemaphores.at(i));

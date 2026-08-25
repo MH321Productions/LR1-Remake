@@ -120,6 +120,8 @@ namespace LR1_Remake {
 
             vk::Image textureImage;
             vk::DeviceMemory textureImageMemory;
+            vk::ImageView textureImageView;
+            vk::Sampler textureSampler;
 
             //Instance creation
             bool createInstance();
@@ -179,10 +181,17 @@ namespace LR1_Remake {
             bool createDescriptorSets();
             [[nodiscard]] uint32_t findMemoryType(const uint32_t& typeFilter, vk::MemoryPropertyFlags properties) const;
             void copyBuffer(const vk::Buffer& srcBuffer, const vk::Buffer& dstBuffer, const vk::DeviceSize& size) const;
+            vk::CommandBuffer beginSingleTimeCommands() const;
+            void endSingleTimeCommands(const vk::CommandBuffer& commandBuffer) const;
 
             //Textures
             bool createImage(const uint32_t& width, const uint32_t& height, vk::Format format, vk::ImageTiling tiling, const vk::ImageUsageFlags& usage, const vk::MemoryPropertyFlags& properties, vk::Image& image, vk::DeviceMemory& imageMemory) const;
             bool createTextureImage();
+            void transitionLayout(const vk::Image& image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout) const;
+            void copyBufferToImage(const vk::Buffer& buffer, const vk::Image& image, const uint32_t& width, const uint32_t& height) const;
+            bool createTextureImageView();
+            vk::ImageView createImageView(const vk::Image& image, vk::Format format) const;
+            bool createTextureSampler();
     };
 }
 

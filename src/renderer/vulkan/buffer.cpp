@@ -4,11 +4,11 @@
 using namespace std;
 
 namespace LR1_Remake {
-    const std::vector<Simple2DColorVertex> vertices = {
-        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}}
+    const std::vector<Simple2DColorTextureVertex> vertices = {
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+        {{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+        {{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}
     };
 
     const vector<uint32_t> VulkanBackend::indices = {0, 1, 2, 2, 3, 0};
@@ -29,7 +29,7 @@ namespace LR1_Remake {
     }
 
     bool VulkanBackend::createVertexBuffer() {
-        const vk::DeviceSize bufferSize = sizeof(Simple2DColorVertex) * vertices.size();
+        const vk::DeviceSize bufferSize = sizeof(Simple2DColorTextureVertex) * vertices.size();
 
         vk::Buffer stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
@@ -83,8 +83,11 @@ namespace LR1_Remake {
     }
 
     bool VulkanBackend::createDescriptorPool() {
-        vk::DescriptorPoolSize poolSize(vk::DescriptorType::eUniformBuffer, maxFramesInFlight);
-        const vk::DescriptorPoolCreateInfo poolInfo({}, maxFramesInFlight, poolSize);
+        constexpr array poolSizes{
+            vk::DescriptorPoolSize(vk::DescriptorType::eUniformBuffer, maxFramesInFlight),
+            vk::DescriptorPoolSize(vk::DescriptorType::eCombinedImageSampler, maxFramesInFlight)
+        };
+        const vk::DescriptorPoolCreateInfo poolInfo({}, maxFramesInFlight, poolSizes);
         checkResult(descriptorPool, logicalDevice.createDescriptorPool(poolInfo));
     }
 
@@ -95,8 +98,13 @@ namespace LR1_Remake {
 
         for (size_t i = 0; i < maxFramesInFlight; i++) {
             vk::DescriptorBufferInfo bufferInfo(uniformBuffers.at(i), 0, sizeof(UniformBufferObject));
-            vk::WriteDescriptorSet writeInfo(descriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {});
-            logicalDevice.updateDescriptorSets(writeInfo, {});
+            vk::DescriptorImageInfo imageInfo(textureSampler, textureImageView, vk::ImageLayout::eShaderReadOnlyOptimal);
+
+            array writeInfos{
+                vk::WriteDescriptorSet(descriptorSets.at(i), 0, 0, vk::DescriptorType::eUniformBuffer, {}, bufferInfo, {}),
+                vk::WriteDescriptorSet(descriptorSets.at(i), 1, 0, vk::DescriptorType::eCombinedImageSampler, imageInfo, {}, {})
+            };
+            logicalDevice.updateDescriptorSets(writeInfos, {});
         }
 
         return true;

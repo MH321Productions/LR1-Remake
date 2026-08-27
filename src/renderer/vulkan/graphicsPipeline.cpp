@@ -103,8 +103,12 @@ namespace LR1_Remake {
     }
 
     bool VulkanBackend::createDescriptorSetLayout() {
-        vk::DescriptorSetLayoutBinding uboLayoutBinding(0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex, nullptr);
-        const vk::DescriptorSetLayoutCreateInfo layoutInfo({}, uboLayoutBinding);
+        constexpr array bindings{
+            vk::DescriptorSetLayoutBinding(0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex, nullptr),            //UBO Layout binding
+            vk::DescriptorSetLayoutBinding(1, vk::DescriptorType::eCombinedImageSampler, 1, vk::ShaderStageFlagBits::eFragment, nullptr)    //Sampler Layout binding
+        };
+
+        const vk::DescriptorSetLayoutCreateInfo layoutInfo({}, bindings);
         checkResult(descriptorSetLayout, logicalDevice.createDescriptorSetLayout(layoutInfo));
     }
 

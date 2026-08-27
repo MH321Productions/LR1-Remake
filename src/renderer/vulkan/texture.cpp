@@ -18,10 +18,7 @@ namespace LR1_Remake {
 
         vk::Buffer stagingBuffer;
         vk::DeviceMemory stagingBufferMemory;
-        checkFunc(
-            createBuffer(imageSize, vk::BufferUsageFlagBits::eTransferSrc, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, stagingBuffer, stagingBufferMemory),
-            "Couldn't create image staging buffer"
-        );
+        if (!createBuffer(imageSize, vk::BufferUsageFlagBits::eTransferSrc, vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent, stagingBuffer, stagingBufferMemory)) return false;
 
         void* data = logicalDevice.mapMemory(stagingBufferMemory, 0, imageSize);
         memcpy(data, pixels, imageSize);
@@ -47,7 +44,10 @@ namespace LR1_Remake {
         return true;
     }
 
-    bool VulkanBackend::createImage(const uint32_t& width, const uint32_t& height, const vk::Format format, const vk::ImageTiling tiling, const vk::ImageUsageFlags& usage, const vk::MemoryPropertyFlags& properties, vk::Image& image, vk::DeviceMemory& imageMemory) const {
+    bool VulkanBackend::createImage(
+        const uint32_t& width, const uint32_t& height, const vk::Format format, const vk::ImageTiling tiling,
+        const vk::ImageUsageFlags& usage, const vk::MemoryPropertyFlags& properties, vk::Image& image, vk::DeviceMemory& imageMemory
+    ) const {
         const vk::ImageCreateInfo imageInfo(
             {},
             vk::ImageType::e2D,
@@ -78,7 +78,7 @@ namespace LR1_Remake {
         return true;
     }
 
-    void VulkanBackend::transitionLayout(const vk::Image& image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout) const {
+    void VulkanBackend::transitionLayout(const vk::Image& image, vk::Format format, const vk::ImageLayout oldLayout, const vk::ImageLayout newLayout) const {
         const vk::CommandBuffer commandBuffer = beginSingleTimeCommands();
         vk::AccessFlags srcAccessMask, dstAccessMask;
         vk::PipelineStageFlags srcStage, dstStage;

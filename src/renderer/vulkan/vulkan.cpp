@@ -35,7 +35,7 @@ namespace LR1_Remake {
         tryInit(createImageViews());
         tryInit(createRenderPass());
         tryInit(createDescriptorSetLayout());
-        tryInit(createGraphicsPipeline<Simple2DColorVertex>());
+        tryInit(createGraphicsPipeline<Simple2DColorTextureVertex>());
         tryInit(createFramebuffers());
         tryInit(createCommandPool());
         tryInit(createTextureImage());

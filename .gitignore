@@ -73,3 +73,6 @@ Testing/
 
 # MacOS finder files
 *.DS_Store
+
+# Explicitly allow Wavefront OBJ (Model) files
+!res/models/*.obj

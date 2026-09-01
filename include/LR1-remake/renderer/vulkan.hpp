@@ -123,6 +123,10 @@ namespace LR1_Remake {
             vk::ImageView textureImageView;
             vk::Sampler textureSampler;
 
+            vk::Image depthImage;
+            vk::DeviceMemory depthImageMemory;
+            vk::ImageView depthImageView;
+
             //Instance creation
             bool createInstance();
             static std::vector<char const*> getRequiredExtensions();
@@ -174,7 +178,8 @@ namespace LR1_Remake {
 
             //Buffers
             bool createBuffer(const vk::DeviceSize& size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags properties, vk::Buffer& buffer, vk::DeviceMemory& bufferMemory) const;
-            bool createVertexBuffer();
+            bool createVertexBuffer(const size_t& vertexSize);
+            template <IVertex TData> bool createVertexBuffer() { return createVertexBuffer(sizeof(TData)); }
             bool createIndexBuffer();
             bool createUniformBuffers();
             bool createDescriptorPool();
@@ -190,8 +195,14 @@ namespace LR1_Remake {
             void transitionLayout(const vk::Image& image, vk::Format format, vk::ImageLayout oldLayout, vk::ImageLayout newLayout) const;
             void copyBufferToImage(const vk::Buffer& buffer, const vk::Image& image, const uint32_t& width, const uint32_t& height) const;
             bool createTextureImageView();
-            vk::ImageView createImageView(const vk::Image& image, vk::Format format) const;
+            [[nodiscard]] vk::ImageView createImageView(const vk::Image& image, vk::Format format, const vk::ImageAspectFlags& aspectFlags) const;
             bool createTextureSampler();
+
+            //Depth buffering
+            bool createDepthResources();
+            [[nodiscard]] vk::Format findSupportedFormat(const std::vector<vk::Format>& candidates, const vk::ImageTiling& tiling, const vk::FormatFeatureFlags& features) const;
+            [[nodiscard]] vk::Format findDepthFormat() const;
+            [[nodiscard]] static bool hasStencilComponent(vk::Format format);
     };
 }
 

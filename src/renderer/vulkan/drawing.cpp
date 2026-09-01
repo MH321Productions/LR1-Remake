@@ -14,7 +14,7 @@ namespace LR1_Remake {
         swapChainFrameBuffers.reserve(swapChainImageViews.size());
         try {
             for (const vk::ImageView& view: swapChainImageViews) {
-                vector attachments = {view};
+                vector attachments = {view, depthImageView};
                 vk::FramebufferCreateInfo framebufferInfo({}, renderPass, attachments, swapChainExtent.width, swapChainExtent.height, 1);
                 swapChainFrameBuffers.push_back(logicalDevice.createFramebuffer(framebufferInfo));
             }
@@ -41,8 +41,11 @@ namespace LR1_Remake {
         constexpr vk::CommandBufferBeginInfo beginInfo({}, nullptr);
         checkFunc(cmd.begin(beginInfo), "Couldn't begin command buffer recording");
 
-        vector clearColor = {vk::ClearValue({0.0f, 0.0f, 0.0f, 1.0f})};
-        const vk::RenderPassBeginInfo renderPassInfo(renderPass, swapChainFrameBuffers.at(imageIndex), {{0, 0}, swapChainExtent}, clearColor);
+        vector clearValues = {
+            vk::ClearValue({0.0f, 0.0f, 0.0f, 1.0f}),
+            vk::ClearValue({1.0f, 0})
+        };
+        const vk::RenderPassBeginInfo renderPassInfo(renderPass, swapChainFrameBuffers.at(imageIndex), {{0, 0}, swapChainExtent}, clearValues);
         cmd.beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
 
         const vector viewport{vk::Viewport(0.0f, 0.0f, static_cast<float>(swapChainExtent.width), static_cast<float>(swapChainExtent.height), 0.0f, 1.0f)};

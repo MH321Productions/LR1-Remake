@@ -64,6 +64,8 @@ namespace LR1_Remake {
             };
             vk::PipelineColorBlendStateCreateInfo colorBlending({}, false, vk::LogicOp::eCopy, colorBlendAttachment, {0.0f, 0.0f, 0.0f, 0.0f});
 
+            vk::PipelineDepthStencilStateCreateInfo depthStencil({}, true, true, vk::CompareOp::eLess, false, false, {}, {}, 0.0f, 1.0f);
+
             vector<vk::PushConstantRange> pushConstantRanges;
             vk::PipelineLayoutCreateInfo pipelineLayoutInfo({}, descriptorSetLayout, pushConstantRanges);
             pipelineLayout = logicalDevice.createPipelineLayout(pipelineLayoutInfo);
@@ -77,7 +79,7 @@ namespace LR1_Remake {
                 &viewportState,
                 &rasterizer,
                 &multisampling,
-                nullptr,
+                &depthStencil,
                 &colorBlending,
                 &dynamicState,
                 pipelineLayout,
@@ -132,9 +134,34 @@ namespace LR1_Remake {
             )
         };
         vector colorAttachmentRef{vk::AttachmentReference(0, vk::ImageLayout::eColorAttachmentOptimal)};
-        vector subpass{vk::SubpassDescription({}, vk::PipelineBindPoint::eGraphics, {}, colorAttachmentRef, {}, {}, {})};
-        vector dependencies{vk::SubpassDependency(vk::SubpassExternal, 0, vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eColorAttachmentOutput)};
-        const vk::RenderPassCreateInfo renderPassInfo({}, colorAttachment, subpass, dependencies);
+
+        vk::AttachmentDescription depthAttachment(
+            {},
+            findDepthFormat(),
+            vk::SampleCountFlagBits::e1,
+            vk::AttachmentLoadOp::eClear,
+            vk::AttachmentStoreOp::eDontCare,
+            vk::AttachmentLoadOp::eDontCare,
+            vk::AttachmentStoreOp::eDontCare,
+            vk::ImageLayout::eUndefined,
+            vk::ImageLayout::eDepthStencilAttachmentOptimal
+        );
+        constexpr vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthStencilAttachmentOptimal);
+
+        array attachments {colorAttachment.front(), depthAttachment};
+
+        vector subpass{vk::SubpassDescription({}, vk::PipelineBindPoint::eGraphics, {}, colorAttachmentRef, {}, &depthAttachmentRef, {})};
+        vector dependencies{
+            vk::SubpassDependency(
+                vk::SubpassExternal,
+                0,
+                vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eLateFragmentTests,
+                vk::PipelineStageFlagBits::eColorAttachmentOutput | vk::PipelineStageFlagBits::eEarlyFragmentTests,
+                vk::AccessFlagBits::eDepthStencilAttachmentWrite,
+                vk::AccessFlagBits::eColorAttachmentWrite | vk::AccessFlagBits::eDepthStencilAttachmentWrite
+            )
+        };
+        const vk::RenderPassCreateInfo renderPassInfo({}, attachments, subpass, dependencies);
 
         checkResult(renderPass, logicalDevice.createRenderPass(renderPassInfo));
     }

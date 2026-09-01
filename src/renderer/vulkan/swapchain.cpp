@@ -108,29 +108,9 @@ namespace LR1_Remake {
 
     bool VulkanBackend::createImageViews() {
         for (const vk::Image& image: swapChainImages) {
-            /*vk::ImageViewCreateInfo createInfo(
-                {},
-                image,
-                vk::ImageViewType::e2D,
-                swapChainImageFormat,
-                vk::ComponentMapping(
-                    vk::ComponentSwizzle::eIdentity,
-                    vk::ComponentSwizzle::eIdentity,
-                    vk::ComponentSwizzle::eIdentity,
-                    vk::ComponentSwizzle::eIdentity
-                ),
-                vk::ImageSubresourceRange(
-                    vk::ImageAspectFlagBits::eColor,
-                    0,
-                    1,
-                    0,
-                    1
-                )
-            );*/
-
             try {
                 //swapChainImageViews.push_back(logicalDevice.createImageView(createInfo));
-                swapChainImageViews.push_back(createImageView(image, swapChainImageFormat));
+                swapChainImageViews.push_back(createImageView(image, swapChainImageFormat, vk::ImageAspectFlagBits::eColor));
             } catch (runtime_error& e) {
                 main.log.fatal << "Couldn't create image view: " << e.what() << endl;
                 return false;
@@ -141,6 +121,10 @@ namespace LR1_Remake {
     }
 
     void VulkanBackend::cleanupSwapChain() {
+        logicalDevice.destroyImageView(depthImageView);
+        logicalDevice.destroyImage(depthImage);
+        logicalDevice.freeMemory(depthImageMemory);
+
         for (const vk::Framebuffer& framebuffer: swapChainFrameBuffers) logicalDevice.destroyFramebuffer(framebuffer);
         for (const vk::ImageView& view: swapChainImageViews) logicalDevice.destroyImageView(view);
         logicalDevice.destroySwapchainKHR(swapChain);
@@ -156,6 +140,7 @@ namespace LR1_Remake {
 
         tryInit(createSwapChain());
         tryInit(createImageViews());
+        tryInit(createDepthResources());
         tryInit(createFramebuffers());
 
         return true;

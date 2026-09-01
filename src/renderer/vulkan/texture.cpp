@@ -135,17 +135,17 @@ namespace LR1_Remake {
     }
 
     bool VulkanBackend::createTextureImageView() {
-        checkResult(textureImageView, createImageView(textureImage, vk::Format::eR8G8B8A8Srgb));
+        checkResult(textureImageView, createImageView(textureImage, vk::Format::eR8G8B8A8Srgb, vk::ImageAspectFlagBits::eColor));
     }
 
-    vk::ImageView VulkanBackend::createImageView(const vk::Image& image, const vk::Format format) const {
+    vk::ImageView VulkanBackend::createImageView(const vk::Image& image, const vk::Format format, const vk::ImageAspectFlags& aspectFlags) const {
         const vk::ImageViewCreateInfo viewInfo(
             {},
             image,
             vk::ImageViewType::e2D,
             format,
             vk::ComponentSwizzle::eIdentity,
-            vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor, 0, 1, 0, 1)
+            vk::ImageSubresourceRange(aspectFlags, 0, 1, 0, 1)
         );
 
         return logicalDevice.createImageView(viewInfo);

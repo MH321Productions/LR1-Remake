@@ -33,6 +33,7 @@ add_executable(lr1-remake
         src/renderer/vulkan/drawing.cpp
         src/renderer/vulkan/buffer.cpp
         src/renderer/vulkan/texture.cpp
+        src/renderer/vulkan/depthResources.cpp
         include/LR1-remake/renderer/data.hpp
         src/renderer/data/vertexData.cpp
 )

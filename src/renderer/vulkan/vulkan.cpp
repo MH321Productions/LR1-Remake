@@ -35,13 +35,14 @@ namespace LR1_Remake {
         tryInit(createImageViews());
         tryInit(createRenderPass());
         tryInit(createDescriptorSetLayout());
-        tryInit(createGraphicsPipeline<Simple2DColorTextureVertex>());
-        tryInit(createFramebuffers());
+        tryInit(createGraphicsPipeline<Simple3DColorTextureVertex>());
         tryInit(createCommandPool());
+        tryInit(createDepthResources());
+        tryInit(createFramebuffers());
         tryInit(createTextureImage());
         tryInit(createTextureImageView());
         tryInit(createTextureSampler());
-        tryInit(createVertexBuffer());
+        tryInit(createVertexBuffer<Simple3DColorTextureVertex>());
         tryInit(createIndexBuffer());
         tryInit(createUniformBuffers());
         tryInit(createDescriptorPool());

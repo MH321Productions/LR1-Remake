@@ -37,6 +37,15 @@ namespace LR1_Remake {
         static const std::vector<vk::VertexInputBindingDescription> bindingDescriptions;
         static const std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
     };
+
+    struct Simple3DColorTextureVertex {
+        glm::vec3 pos;
+        glm::vec3 color;
+        glm::vec2 texCoord;
+
+        static const std::vector<vk::VertexInputBindingDescription> bindingDescriptions;
+        static const std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
+    };
 }
 
 #endif //LR1_REMAKE_MODELDATA_HPP

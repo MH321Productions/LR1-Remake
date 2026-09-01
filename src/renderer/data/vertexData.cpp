@@ -19,4 +19,13 @@ namespace LR1_Remake {
         vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32G32B32Sfloat, offsetof(Simple2DColorTextureVertex, color)),
         vk::VertexInputAttributeDescription(2, 0, vk::Format::eR32G32Sfloat, offsetof(Simple2DColorTextureVertex, texCoord))
     };
+
+    const vector<vk::VertexInputBindingDescription> Simple3DColorTextureVertex::bindingDescriptions = {
+        vk::VertexInputBindingDescription(0, sizeof(Simple3DColorTextureVertex), vk::VertexInputRate::eVertex)
+    };
+    const vector<vk::VertexInputAttributeDescription> Simple3DColorTextureVertex::attributeDescriptions = {
+        vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32G32B32Sfloat, offsetof(Simple3DColorTextureVertex, pos)),
+        vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32G32B32Sfloat, offsetof(Simple3DColorTextureVertex, color)),
+        vk::VertexInputAttributeDescription(2, 0, vk::Format::eR32G32Sfloat, offsetof(Simple3DColorTextureVertex, texCoord))
+    };
 }

@@ -70,7 +70,6 @@ namespace LR1_Remake {
             static const std::vector<const char*> deviceExtensions;
             static constexpr uint32_t maxFramesInFlight = 2;
             static constexpr uint32_t maxSwapChainImages = 4;
-            static const std::vector<uint32_t> indices;
 
             Main& main;
 
@@ -126,6 +125,9 @@ namespace LR1_Remake {
             vk::Image depthImage;
             vk::DeviceMemory depthImageMemory;
             vk::ImageView depthImageView;
+
+            std::vector<Simple3DColorTextureVertex> vertices;
+            std::vector<uint32_t> indices;
 
             //Instance creation
             bool createInstance();
@@ -203,6 +205,9 @@ namespace LR1_Remake {
             [[nodiscard]] vk::Format findSupportedFormat(const std::vector<vk::Format>& candidates, const vk::ImageTiling& tiling, const vk::FormatFeatureFlags& features) const;
             [[nodiscard]] vk::Format findDepthFormat() const;
             [[nodiscard]] static bool hasStencilComponent(vk::Format format);
+
+            //Models
+            bool loadModel();
     };
 }
 

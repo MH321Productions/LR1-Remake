@@ -14,6 +14,7 @@ namespace LR1_Remake {
         VertexShader,
         FragmentShader,
         Texture,
+        Model,
 
         Undefined
     };

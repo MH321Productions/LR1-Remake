@@ -42,6 +42,7 @@ namespace LR1_Remake {
         tryInit(createTextureImage());
         tryInit(createTextureImageView());
         tryInit(createTextureSampler());
+        tryInit(loadModel());
         tryInit(createVertexBuffer<Simple3DColorTextureVertex>());
         tryInit(createIndexBuffer());
         tryInit(createUniformBuffers());

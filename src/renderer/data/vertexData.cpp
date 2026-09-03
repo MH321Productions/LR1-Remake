@@ -28,4 +28,8 @@ namespace LR1_Remake {
         vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32G32B32Sfloat, offsetof(Simple3DColorTextureVertex, color)),
         vk::VertexInputAttributeDescription(2, 0, vk::Format::eR32G32Sfloat, offsetof(Simple3DColorTextureVertex, texCoord))
     };
+
+    bool Simple3DColorTextureVertex::operator==(const Simple3DColorTextureVertex &other) const {
+        return pos == other.pos && color == other.color && texCoord == other.texCoord;
+    }
 }

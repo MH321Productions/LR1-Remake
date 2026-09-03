@@ -10,7 +10,8 @@ namespace LR1_Remake {
     const array<ResourceInfo, static_cast<size_t>(ResourceType::Undefined)> ResourceHandler::infos = {{
         {.folder = "shaders", .extension = ".vert.spv"},
         {.folder = "shaders", .extension = ".frag.spv"},
-        {.folder = "textures", .extension = ".jpg"}
+        {.folder = "textures", .extension = ".png"},
+        {.folder = "models", .extension = ".obj"}
     }};
 
     path ResourceHandler::getResourcePath(const string& name, ResourceType type) const {

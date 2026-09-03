@@ -9,6 +9,16 @@ find_package(SDL3_mixer REQUIRED)
 find_package(glm REQUIRED)
 find_package(Vulkan REQUIRED COMPONENTS glslc)
 
+include(FetchContent)
+
+FetchContent_Declare(
+    tinyobjectloader
+    GIT_REPOSITORY https://github.com/tinyobjloader/tinyobjloader.git
+    GIT_TAG release
+)
+
+FetchContent_MakeAvailable(tinyobjectloader)
+
 #TODO: Implement stb as a dependency (maybe via FetchContent)
 
 include_directories(include)
@@ -34,13 +44,15 @@ add_executable(lr1-remake
         src/renderer/vulkan/buffer.cpp
         src/renderer/vulkan/texture.cpp
         src/renderer/vulkan/depthResources.cpp
+        src/renderer/vulkan/models.cpp
         include/LR1-remake/renderer/data.hpp
         src/renderer/data/vertexData.cpp
 )
-target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan)
+target_link_libraries(lr1-remake SDL3::SDL3 SDL3_mixer::SDL3_mixer glm::glm Vulkan::Vulkan tinyobjloader)
 target_compile_definitions(lr1-remake PUBLIC
         GLM_FORCE_RADIANS
         GLM_FORCE_DEPTH_ZERO_TO_ONE
+        GLM_ENABLE_EXPERIMENTAL
 )
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     message(STATUS "Debug Build")
@@ -70,4 +82,9 @@ add_custom_command(
         TARGET lr1-remake POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/res/textures/ $<TARGET_FILE_DIR:lr1-remake>/res/textures
+)
+add_custom_command(
+        TARGET lr1-remake POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/res/models/ $<TARGET_FILE_DIR:lr1-remake>/res/models
 )

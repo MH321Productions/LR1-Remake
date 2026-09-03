@@ -8,7 +8,7 @@ using namespace std;
 namespace LR1_Remake {
     bool VulkanBackend::createTextureImage() {
         int width, height, channels;
-        uint8_t* pixels = stbi_load(main.res.getResourcePath("flowers", ResourceType::Texture).string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
+        uint8_t* pixels = stbi_load(main.res.getResourcePath("viking_room", ResourceType::Texture).string().c_str(), &width, &height, &channels, STBI_rgb_alpha);
         const vk::DeviceSize imageSize = width * height * 4;
 
         if (!pixels) {

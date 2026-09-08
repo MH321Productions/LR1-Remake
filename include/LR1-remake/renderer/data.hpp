@@ -49,16 +49,33 @@ namespace LR1_Remake {
 
         bool operator==(const Simple3DColorTextureVertex& other) const;
     };
-}
 
-namespace std {
-    template<> struct hash<LR1_Remake::Simple3DColorTextureVertex> {
-        size_t operator()(const LR1_Remake::Simple3DColorTextureVertex& vertex) noexcept {
-            return ((hash<glm::vec3>()(vertex.pos) ^
-                   (hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
-                   (hash<glm::vec2>()(vertex.texCoord) << 1);
-        }
+    struct Simple3DColorNormalVertex {
+        glm::vec3 pos;
+        glm::vec3 normal;
+        glm::vec2 texCoord;
+
+        static const std::vector<vk::VertexInputBindingDescription> bindingDescriptions;
+        static const std::vector<vk::VertexInputAttributeDescription> attributeDescriptions;
+
+        bool operator==(const Simple3DColorNormalVertex& other) const;
     };
 }
+
+template<> struct std::hash<LR1_Remake::Simple3DColorTextureVertex> {
+    size_t operator()(const LR1_Remake::Simple3DColorTextureVertex& vertex) const noexcept {
+        return ((hash<glm::vec3>()(vertex.pos) ^
+                 (hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
+               (hash<glm::vec2>()(vertex.texCoord) << 1);
+    }
+};
+
+template<> struct std::hash<LR1_Remake::Simple3DColorNormalVertex> {
+    size_t operator()(const LR1_Remake::Simple3DColorNormalVertex& vertex) const noexcept {
+        return ((hash<glm::vec3>()(vertex.pos) ^
+                 (hash<glm::vec3>()(vertex.normal) << 1)) >> 1) ^
+               (hash<glm::vec2>()(vertex.texCoord) << 1);
+    }
+};
 
 #endif //LR1_REMAKE_MODELDATA_HPP

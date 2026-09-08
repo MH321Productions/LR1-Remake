@@ -126,7 +126,7 @@ namespace LR1_Remake {
             vk::DeviceMemory depthImageMemory;
             vk::ImageView depthImageView;
 
-            std::vector<Simple3DColorTextureVertex> vertices;
+            std::vector<Simple3DColorNormalVertex> vertices;
             std::vector<uint32_t> indices;
 
             //Instance creation

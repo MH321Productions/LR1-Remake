@@ -32,4 +32,17 @@ namespace LR1_Remake {
     bool Simple3DColorTextureVertex::operator==(const Simple3DColorTextureVertex &other) const {
         return pos == other.pos && color == other.color && texCoord == other.texCoord;
     }
+
+    const vector<vk::VertexInputBindingDescription> Simple3DColorNormalVertex::bindingDescriptions = {
+        vk::VertexInputBindingDescription(0, sizeof(Simple3DColorNormalVertex), vk::VertexInputRate::eVertex)
+    };
+    const vector<vk::VertexInputAttributeDescription> Simple3DColorNormalVertex::attributeDescriptions = {
+        vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32G32B32Sfloat, offsetof(Simple3DColorNormalVertex, pos)),
+        vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32G32B32Sfloat, offsetof(Simple3DColorNormalVertex, normal)),
+        vk::VertexInputAttributeDescription(2, 0, vk::Format::eR32G32Sfloat, offsetof(Simple3DColorNormalVertex, texCoord))
+    };
+
+    bool Simple3DColorNormalVertex::operator==(const Simple3DColorNormalVertex &other) const {
+        return pos == other.pos && normal == other.normal && texCoord == other.texCoord;
+    }
 }

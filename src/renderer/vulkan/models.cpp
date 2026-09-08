@@ -14,7 +14,7 @@ namespace LR1_Remake {
         vector<tinyobj::material_t> materials;
         string warn, err;
 
-        unordered_map<Simple3DColorTextureVertex, uint32_t> uniqueVertices{};
+        unordered_map<Simple3DColorNormalVertex, uint32_t> uniqueVertices{};
         size_t numVertices = 0;
 
         if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, main.res.getResourcePath("viking_room", ResourceType::Model).string().c_str())) {
@@ -24,13 +24,17 @@ namespace LR1_Remake {
 
         for (const tinyobj::shape_t& shape : shapes) {
             for (const tinyobj::index_t& index: shape.mesh.indices) {
-                Simple3DColorTextureVertex vertex {
+                Simple3DColorNormalVertex vertex {
                     .pos = {
                         attrib.vertices.at(3 * index.vertex_index + 0),
                         attrib.vertices.at(3 * index.vertex_index + 1),
                         attrib.vertices.at(3 * index.vertex_index + 2),
                     },
-                    .color = {1.0f, 1.0f, 1.0f},
+                    .normal = {
+                        attrib.normals.at(3 * index.normal_index + 0),
+                        attrib.normals.at(3 * index.normal_index + 1),
+                        attrib.normals.at(3 * index.normal_index + 2)
+                    },
                     .texCoord = {
                         attrib.texcoords.at(2 * index.texcoord_index + 0),
                         1.0f - attrib.texcoords.at(2 * index.texcoord_index + 1)

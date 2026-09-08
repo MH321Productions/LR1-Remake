@@ -5,8 +5,8 @@ using namespace std;
 
 namespace LR1_Remake {
     bool VulkanBackend::createGraphicsPipeline(const std::vector<vk::VertexInputBindingDescription>& vertexBindingDescriptions, const std::vector<vk::VertexInputAttributeDescription>& vertexAttributeDescriptions) {
-        const vector<uint8_t> vertexCode = main.res.loadResource("first", ResourceType::VertexShader);
-        const vector<uint8_t> fragmentCode = main.res.loadResource("first", ResourceType::FragmentShader);
+        const vector<uint8_t> vertexCode = main.res.loadResource("phong", ResourceType::VertexShader);
+        const vector<uint8_t> fragmentCode = main.res.loadResource("phong", ResourceType::FragmentShader);
 
         try {
             const vk::ShaderModule vertexModule = createShaderModule(vertexCode);
@@ -106,7 +106,7 @@ namespace LR1_Remake {
 
     bool VulkanBackend::createDescriptorSetLayout() {
         constexpr array bindings{
-            vk::DescriptorSetLayoutBinding(0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex, nullptr),            //UBO Layout binding
+            vk::DescriptorSetLayoutBinding(0, vk::DescriptorType::eUniformBuffer, 1, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, nullptr),            //UBO Layout binding
             vk::DescriptorSetLayoutBinding(1, vk::DescriptorType::eCombinedImageSampler, 1, vk::ShaderStageFlagBits::eFragment, nullptr)    //Sampler Layout binding
         };
 

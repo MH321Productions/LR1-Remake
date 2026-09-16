@@ -25,9 +25,9 @@ void main() {
     vec3 ambient = ambientStrength * lightColor;
 
     //Diffuse lighting
-    vec3 correctedLightPos = (ubo.model * vec4(lightPos, 1.0)).xyz;
+    vec3 correctedLightPos = vec3(ubo.model * vec4(lightPos, 1.0));
     vec3 norm = normalize(fragNormal);
-    vec3 lightDir = normalize(correctedLightPos - fragPos);
+    vec3 lightDir = normalize(lightPos - fragPos);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor;
 

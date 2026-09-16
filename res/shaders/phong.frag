@@ -1,10 +1,10 @@
 #version 450
 
-const vec3 lightPos = vec3(1, 1, 1);
-const vec3 viewPos = vec3(2, 2, 2);
+const vec3 lightPos = vec3(1.5, 1, 1.5); //World Space
+const vec3 viewPos = vec3(2, 2, 2); //Camera pos
 const vec3 lightColor = vec3(1, 1, 1); //White light
 
-layout(binding = 0) uniform UniformBUfferObject {
+layout(binding = 0) uniform UniformBufferObject {
     mat4 model;
     mat4 view;
     mat4 proj;
@@ -25,18 +25,17 @@ void main() {
     vec3 ambient = ambientStrength * lightColor;
 
     //Diffuse lighting
-    vec3 correctedLightPos = vec3(ubo.model * vec4(lightPos, 1.0));
     vec3 norm = normalize(fragNormal);
     vec3 lightDir = normalize(lightPos - fragPos);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor;
 
     //Specular lighting
-    float specularStrength = 500000;
+    float specularStrength = 500;
     vec3 viewDir = normalize(viewPos - fragPos);
     vec3 reflectDir = reflect(-lightDir, fragNormal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = specularStrength * spec * lightColor;
+    vec3 specular = specularStrength * spec * vec3(0, 0, 1);
 
     //Result
     vec3 result = (ambient + diffuse + specular) * objectColor;
